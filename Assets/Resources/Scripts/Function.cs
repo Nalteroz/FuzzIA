@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Function
+﻿public class Function
 {
     public float a { get; private set; }
     public float b { get; private set; }

@@ -1,95 +1,76 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
 
 public class FuzzyDomain
 {
     public string Name;
-    private List<Vector> VerticesPoints = new List<Vector>();
-    private Function[] Functions = new Function[2];
-    public Types Type{get; private set;}
-    
-    public FuzzyDomain(string Name, float[] Vertices)
+    public float[] Range { get; private set; }
+    public List<FuzzySet> FuzzySets = new List<FuzzySet>();
+
+    public FuzzyDomain(string Name, float RangeBegin, float RangeEnd)
     {
         this.Name = Name;
-        SetVertices(Vertices);
-    }
-
-    public enum Types
-    {
-        Triangle,
-        Trapezium
-    }
-
-    public void SetVertices(float[] Vertices)
-    {
-        if(Vertices.Length <3 || Vertices.Length > 4)
+        if (RangeBegin <= RangeEnd) SetRange(RangeBegin, RangeEnd);
+        else
         {
-            Debug.LogError("Erro in set vertices. Size of vertex incorrect!");
+            Debug.LogError("Range incorrect in FuzzyDomain. Inverting");
+            SetRange(RangeEnd, RangeBegin);
+        }
+    }
+
+    public string str()
+    {
+        string Out = "";
+        Out += "Domain name: " + Name + "\n";
+        Out += "Range: " + "[" + Range[0].ToString() + ";" + Range[1].ToString() + "]" + "\n";
+        foreach(FuzzySet Set in FuzzySets)
+        {
+            Out += Set.str();
+        }
+        return Out;
+    }
+
+    public void SetRange(float begin, float end)
+    {
+        Range = new float[] { begin, end };
+    }
+
+    public void AddFuzzySet(string name, float[] vertices)
+    {
+        if(FuzzySets.Exists(f => f.Name == name ))
+        {
+            Debug.LogError("The fuzzyset already exist in the list.");
             return;
         }
         else
         {
-            if (Vertices.Length == 3)
-            {
-                Type = Types.Triangle;
-                VerticesPoints.Add(new Vector(Vertices[0], 0));
-                VerticesPoints.Add(new Vector(Vertices[1], 1));
-                VerticesPoints.Add(new Vector(Vertices[2], 0));
-                Functions[0] = new Function(VerticesPoints[0], VerticesPoints[1]);
-                Functions[1] = new Function(VerticesPoints[1], VerticesPoints[2]);
-            }
-            else if (Vertices.Length == 4)
-            {
-                Type = Types.Trapezium;
-                VerticesPoints.Add(new Vector(Vertices[0], 0));
-                VerticesPoints.Add(new Vector(Vertices[1], 1));
-                VerticesPoints.Add(new Vector(Vertices[2], 1));
-                VerticesPoints.Add(new Vector(Vertices[3], 0));
-                Functions[0] = new Function(VerticesPoints[0], VerticesPoints[1]);
-                Functions[1] = new Function(VerticesPoints[2], VerticesPoints[3]);
-            }
+            FuzzySets.Add(new FuzzySet(name, vertices));
         }
     }
 
-    public float IsInDomain(float value)
+    public List<FuzzyOutput> GetAnswer(float value)
     {
-        if (VerticesPoints[0].x > value || VerticesPoints[VerticesPoints.Count - 1].x < value)
+        List<FuzzyOutput> Answer = new List<FuzzyOutput>();
+        float result = 0;
+        foreach(FuzzySet Set in FuzzySets)
         {
-            Debug.LogError("value is not in the domain");
-            return 0;
+            result = Set.IsInDomain(value);
+            if (result > 0) Answer.Add(new FuzzyOutput(Set.Name, result));
         }
-        else
-        {
-            if(Type == Types.Triangle)
-            {
-                if(value <= VerticesPoints[1].x)
-                {
-                    return Functions[0].CalculeValue(value);
-                }
-                else
-                {
-                    return Functions[1].CalculeValue(value);
-                }
-            }
-            else if(Type == Types.Trapezium)
-            {
-                if (value <= VerticesPoints[1].x)
-                {
-                    return Functions[0].CalculeValue(value);
-                }
-                else if( value >= VerticesPoints[2].x)
-                {
-                    return Functions[1].CalculeValue(value);
-                }
-                else
-                {
-                    return VerticesPoints[2].y;
-                }
-            }
-        }
-        return 0;
+        return Answer;
     }
-    
+
+}
+
+public class FuzzyOutput
+{
+    public string SetName;
+    public float SetValue;
+
+    public FuzzyOutput(string name, float value)
+    {
+        SetName = name;
+        SetValue = value;
+    }
 }

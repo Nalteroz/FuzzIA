@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
-    FuzzyDomain MyFS;
+    FuzzyDomain MyFD = new FuzzyDomain("Distance", 0, 10);
+    List<FuzzyOutput> Answer;
     
 
 	// Use this for initialization
 	void Start ()
     {
-        MyFS = new FuzzyDomain("Teste", new float[] { 0, 1, 2, 2});
-        Debug.Log(MyFS.Type);
-        Debug.Log(MyFS.IsInDomain(0.5f));
+        MyFD.AddFuzzySet("Close", new float[] { 0, 0, 2, 5});
+        MyFD.AddFuzzySet("Medium", new float[] { 3, 5, 7 });
+        MyFD.AddFuzzySet("Far", new float[] { 5, 8, 10, 10 });
+        Debug.Log(MyFD.str());
+        Answer = MyFD.GetAnswer(4);
+        foreach(FuzzyOutput Out in Answer)
+        {
+            Debug.Log("["+Out.SetName + ";" + Out.SetValue.ToString()+"]");
+        }
+
 	}
 	
 }
