@@ -4,18 +4,15 @@ using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
-    FuzzySector MyFS;
-    Vector2[] Vert = new Vector2[3];
+    FuzzyDomain MyFS;
     
 
 	// Use this for initialization
 	void Start ()
     {
-        Vert[0] = new Vector2(0, 0);
-        Vert[1] = new Vector2(1, 1);
-        Vert[2] = new Vector2(0, 0);
-        MyFS = new FuzzySector("Teste", Vert);
-        Debug.Log(MyFS.IsInDomain(1));
+        MyFS = new FuzzyDomain("Teste", new float[] { 0, 1, 2, 2});
+        Debug.Log(MyFS.Type);
+        Debug.Log(MyFS.IsInDomain(0.5f));
 	}
 	
 }

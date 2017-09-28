@@ -3,18 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class FuzzySector
+public class FuzzyDomain
 {
     public string Name;
-    private Vector2[] Vertices;
+    private List<Vector> VerticesPoints = new List<Vector>();
     private Function[] Functions = new Function[2];
     public Types Type{get; private set;}
-
-    public FuzzySector(string Name)
-    {
-        this.Name = Name;
-    }
-    public FuzzySector(string Name, Vector2[] Vertices)
+    
+    public FuzzyDomain(string Name, float[] Vertices)
     {
         this.Name = Name;
         SetVertices(Vertices);
@@ -24,9 +20,9 @@ public class FuzzySector
     {
         Triangle,
         Trapezium
-    };
+    }
 
-    public void SetVertices(Vector2[] Vertices)
+    public void SetVertices(float[] Vertices)
     {
         if(Vertices.Length <3 || Vertices.Length > 4)
         {
@@ -35,33 +31,40 @@ public class FuzzySector
         }
         else
         {
-            this.Vertices = Vertices;
             if (Vertices.Length == 3)
             {
                 Type = Types.Triangle;
-                Functions[0] = new Function(Vertices[0], Vertices[1]);
-                Functions[1] = new Function(Vertices[1], Vertices[2]);
+                VerticesPoints.Add(new Vector(Vertices[0], 0));
+                VerticesPoints.Add(new Vector(Vertices[1], 1));
+                VerticesPoints.Add(new Vector(Vertices[2], 0));
+                Functions[0] = new Function(VerticesPoints[0], VerticesPoints[1]);
+                Functions[1] = new Function(VerticesPoints[1], VerticesPoints[2]);
             }
             else if (Vertices.Length == 4)
             {
                 Type = Types.Trapezium;
-                Functions[0] = new Function(Vertices[0], Vertices[1]);
-                Functions[1] = new Function(Vertices[1], Vertices[2]);
+                VerticesPoints.Add(new Vector(Vertices[0], 0));
+                VerticesPoints.Add(new Vector(Vertices[1], 1));
+                VerticesPoints.Add(new Vector(Vertices[2], 1));
+                VerticesPoints.Add(new Vector(Vertices[3], 0));
+                Functions[0] = new Function(VerticesPoints[0], VerticesPoints[1]);
+                Functions[1] = new Function(VerticesPoints[2], VerticesPoints[3]);
             }
         }
     }
 
     public float IsInDomain(float value)
     {
-        if(Vertices[0].x > value || Vertices[Vertices.Length - 1].x < value)
+        if (VerticesPoints[0].x > value || VerticesPoints[VerticesPoints.Count - 1].x < value)
         {
+            Debug.LogError("value is not in the domain");
             return 0;
         }
         else
         {
             if(Type == Types.Triangle)
             {
-                if(value <= Vertices[1].x)
+                if(value <= VerticesPoints[1].x)
                 {
                     return Functions[0].CalculeValue(value);
                 }
@@ -72,21 +75,20 @@ public class FuzzySector
             }
             else if(Type == Types.Trapezium)
             {
-                if (value <= Vertices[1].x)
+                if (value <= VerticesPoints[1].x)
                 {
                     return Functions[0].CalculeValue(value);
                 }
-                else if( value >= Vertices[2].x)
+                else if( value >= VerticesPoints[2].x)
                 {
                     return Functions[1].CalculeValue(value);
                 }
                 else
                 {
-                    return Vertices[2].y;
+                    return VerticesPoints[2].y;
                 }
             }
         }
-
         return 0;
     }
     
