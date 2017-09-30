@@ -20,7 +20,6 @@ public class TestScript : MonoBehaviour
         {
             Debug.Log("["+Out.SetName + ";" + Out.SetValue.ToString()+"]");
         }
-
-	}
+    }
 	
 }

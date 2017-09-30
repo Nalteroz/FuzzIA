@@ -39,19 +39,19 @@ public class FuzzySet
     {
         if(Vertices.Length <3 || Vertices.Length > 4)
         {
-            throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
+            throw new System.InvalidOperationException("Erro on create set: Invalid number of set vertices on " + Name);
         }
         else
         {
             if(Vertices[1] < Vertices[0])
             {
-                throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
+                throw new System.InvalidOperationException("Erro on create set: Invalid values on set vertices of " + Name);
             }
             if (Vertices.Length == 3)
             {
                 if (Vertices[2] < Vertices[1])
                 {
-                    throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
+                    throw new System.InvalidOperationException("Erro on create set: Invalid values on set vertices of " + Name);
                 }
                 Type = Types.Triangle;
                 VerticesPoints.Add(new Vector(Vertices[0], 0));
@@ -64,7 +64,7 @@ public class FuzzySet
             {
                 if (Vertices[2] < Vertices[1] || Vertices[3] < Vertices[2])
                 {
-                    throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
+                    throw new System.InvalidOperationException("Erro on create set: Invalid values on set vertices of " + Name);
                 }
                 Type = Types.Trapezium;
                 VerticesPoints.Add(new Vector(Vertices[0], 0));
