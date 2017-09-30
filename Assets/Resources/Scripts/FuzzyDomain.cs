@@ -4,18 +4,19 @@ using System.Collections.Generic;
 
 public class FuzzyDomain
 {
+    public int ID;
     public string Name;
     public float[] Range { get; private set; }
-    public List<FuzzySet> FuzzySets = new List<FuzzySet>();
+    public List<FuzzySet> FuzzySets { get; private set; }
 
     public FuzzyDomain(string Name, float RangeBegin, float RangeEnd)
     {
+        FuzzySets = new List<FuzzySet>();
         this.Name = Name;
-        if (RangeBegin <= RangeEnd) SetRange(RangeBegin, RangeEnd);
+        if (RangeBegin < RangeEnd) SetRange(RangeBegin, RangeEnd);
         else
         {
-            Debug.LogError("Range incorrect in FuzzyDomain. Inverting");
-            SetRange(RangeEnd, RangeBegin);
+            throw new System.InvalidOperationException("Range incorrect in FuzzyDomain!");
         }
     }
 
@@ -36,12 +37,11 @@ public class FuzzyDomain
         Range = new float[] { begin, end };
     }
 
-    public void AddFuzzySet(string name, float[] vertices)
+    public void AddSet(string name, float[] vertices)
     {
         if(FuzzySets.Exists(f => f.Name == name ))
         {
-            Debug.LogError("The fuzzyset already exist in the list.");
-            return;
+            throw new System.InvalidOperationException("A set with the name " + name + " already exist!");
         }
         else
         {
@@ -53,6 +53,10 @@ public class FuzzyDomain
     {
         List<FuzzyOutput> Answer = new List<FuzzyOutput>();
         float result = 0;
+        if(value < Range[0] || value > Range[1])
+        {
+            throw new System.InvalidOperationException("The value is not on the range of the domain " + Name);
+        }
         foreach(FuzzySet Set in FuzzySets)
         {
             result = Set.IsInDomain(value);

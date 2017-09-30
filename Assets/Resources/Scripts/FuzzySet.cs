@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FuzzySet
 {
+    public int ID;
     public string Name;
     private List<Vector> VerticesPoints = new List<Vector>();
     private Function[] Functions = new Function[2];
@@ -38,13 +39,20 @@ public class FuzzySet
     {
         if(Vertices.Length <3 || Vertices.Length > 4)
         {
-            Debug.LogError("Erro in set vertices. Size of vertex incorrect!");
-            return;
+            throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
         }
         else
         {
+            if(Vertices[1] < Vertices[0])
+            {
+                throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
+            }
             if (Vertices.Length == 3)
             {
+                if (Vertices[2] < Vertices[1])
+                {
+                    throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
+                }
                 Type = Types.Triangle;
                 VerticesPoints.Add(new Vector(Vertices[0], 0));
                 VerticesPoints.Add(new Vector(Vertices[1], 1));
@@ -54,6 +62,10 @@ public class FuzzySet
             }
             else if (Vertices.Length == 4)
             {
+                if (Vertices[2] < Vertices[1] || Vertices[3] < Vertices[2])
+                {
+                    throw new System.InvalidOperationException("Invalid values on set vertices of " + Name);
+                }
                 Type = Types.Trapezium;
                 VerticesPoints.Add(new Vector(Vertices[0], 0));
                 VerticesPoints.Add(new Vector(Vertices[1], 1));

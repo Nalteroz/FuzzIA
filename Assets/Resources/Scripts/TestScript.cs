@@ -11,9 +11,9 @@ public class TestScript : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        MyFD.AddFuzzySet("Close", new float[] { 0, 0, 2, 5});
-        MyFD.AddFuzzySet("Medium", new float[] { 3, 5, 7 });
-        MyFD.AddFuzzySet("Far", new float[] { 5, 8, 10, 10 });
+        MyFD.AddSet("Close", new float[] { 0, 0, 2, 5});
+        MyFD.AddSet("Medium", new float[] { 3, 5, 7 });
+        MyFD.AddSet("Far", new float[] { 5, 8, 10, 10 });
         Debug.Log(MyFD.str());
         Answer = MyFD.GetAnswer(4);
         foreach(FuzzyOutput Out in Answer)
