@@ -64,9 +64,9 @@ public class FuzzyDomain
             FuzzySets.Remove(Set);
         }
     }
-    public List<FuzzyOutput> GetAnswer(float value)
+    public List<FuzzyValue> GetMembership(float value)
     {
-        List<FuzzyOutput> Answer = new List<FuzzyOutput>();
+        List<FuzzyValue> Answer = new List<FuzzyValue>();
         float result = 0;
         if(value < Range[0] || value > Range[1])
         {
@@ -75,20 +75,21 @@ public class FuzzyDomain
         foreach(FuzzySet Set in FuzzySets)
         {
             result = Set.IsInDomain(value);
-            if (result > 0) Answer.Add(new FuzzyOutput(Set.Name, result));
+            if (result > 0) Answer.Add(new FuzzyValue(Set, result));
         }
         return Answer;
     }
 }
 
-public class FuzzyOutput
+public class FuzzyValue
 {
-    public string SetName;
-    public float SetValue;
+    public bool NotFlag = false;
+    public FuzzySet Set;
+    public float Value;
 
-    public FuzzyOutput(string name, float value)
+    public FuzzyValue(FuzzySet Set, float value)
     {
-        SetName = name;
-        SetValue = value;
+        this.Set = Set;
+        Value = value;
     }
 }
