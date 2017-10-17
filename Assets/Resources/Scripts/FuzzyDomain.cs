@@ -6,17 +6,37 @@ public class FuzzyDomain
 {
     public int ID;
     public string Name;
+    public float Var{ get; private set; }
     public float[] Range { get; private set; }
     public List<FuzzySet> FuzzySets { get; private set; }
+    public List<FuzzyValue> CurrentMembership { get; private set; }
 
     public FuzzyDomain(string Name, float RangeBegin, float RangeEnd)
     {
         FuzzySets = new List<FuzzySet>();
+        SetValue(RangeBegin);
         this.Name = Name;
         if (RangeBegin < RangeEnd) SetRange(RangeBegin, RangeEnd);
         else
         {
             throw new System.InvalidOperationException("Erro on create domain: Range incorrect in FuzzyDomain!");
+        }
+    }
+
+    public void SetValue(float value)
+    {
+        if(value< Range[0] || value > Range[1])
+        {
+            throw new System.FormatException("Erro in set value. The value is not on the range!");
+        }
+        else
+        {
+            Var = value;
+            foreach(FuzzySet Set in FuzzySets)
+            {
+                Set.SetValue(Var);
+            }
+            CurrentMembership = GetMembership();
         }
     }
 
@@ -64,17 +84,13 @@ public class FuzzyDomain
             FuzzySets.Remove(Set);
         }
     }
-    public List<FuzzyValue> GetMembership(float value)
+    public List<FuzzyValue> GetMembership()
     {
         List<FuzzyValue> Answer = new List<FuzzyValue>();
         float result = 0;
-        if(value < Range[0] || value > Range[1])
-        {
-            throw new System.InvalidOperationException("Erro on get answer of domain: The value is not on the range value of " + Name);
-        }
         foreach(FuzzySet Set in FuzzySets)
         {
-            result = Set.IsInDomain(value);
+            result = Set.IsInDomain();
             if (result > 0) Answer.Add(new FuzzyValue(Set, result));
         }
         return Answer;

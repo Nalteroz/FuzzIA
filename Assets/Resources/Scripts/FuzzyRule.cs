@@ -30,38 +30,41 @@ public class FuzzyRule
     public FuzzyValue FulfillRule()
     {
         FuzzyValue Answer = new FuzzyValue(Output, 0);
-        float NotValue = 0;
+        float NotValue = 0, DomainValue = 0;
 
-        if (Conditions[0].NotFlag) Answer.Value = 1 - Conditions[0].Value;
-        else Answer.Value = Conditions[0].Value;
+
+        if (Conditions[0].NotFlag) Answer.Value = 1 - Conditions[0].Set.IsInDomain();
+        else Answer.Value = Conditions[0].Set.IsInDomain();
 
         switch(Operation)
         {
             case LogicOperation.And:
                 foreach(FuzzyValue Condition in Conditions)
                 {
+                    DomainValue = Condition.Set.IsInDomain();
                     if (Condition.NotFlag)
                     {
-                        NotValue = 1 - Condition.Value;
+                        NotValue = 1 - DomainValue;
                         if (NotValue > Answer.Value) Answer.Value = NotValue;
                     }
                     else
                     {
-                        if (Condition.Value > Answer.Value) Answer.Value = Condition.Value;
+                        if (DomainValue > Answer.Value) Answer.Value = DomainValue;
                     }
                 }
                 break;
             case LogicOperation.Or:
                 foreach (FuzzyValue Condition in Conditions)
                 {
+                    DomainValue = Condition.Set.IsInDomain();
                     if (Condition.NotFlag)
                     {
-                        NotValue = 1 - Condition.Value;
+                        NotValue = 1 - DomainValue;
                         if (NotValue < Answer.Value) Answer.Value = NotValue;
                     }
                     else
                     {
-                        if (Condition.Value < Answer.Value) Answer.Value = Condition.Value;
+                        if (DomainValue < Answer.Value) Answer.Value = DomainValue;
                     }
                 }
                 break;
@@ -74,3 +77,4 @@ public class FuzzyRule
     }
 
 }
+

@@ -6,6 +6,7 @@ public class FuzzySet
 {
     public int ID;
     public string Name;
+    public float Var { get; private set; }
     private List<Vector> VerticesPoints = new List<Vector>();
     private Function[] Functions = new Function[2];
     public Types Type{get; private set;}
@@ -28,7 +29,10 @@ public class FuzzySet
         Out += "\n";
         return Out;
     }
-
+    public void SetValue(float value)
+    {
+        Var = value;
+    }
     public enum Types
     {
         Triangle,
@@ -77,9 +81,9 @@ public class FuzzySet
         }
     }
 
-    public float IsInDomain(float value)
+    public float IsInDomain()
     {
-        if (VerticesPoints[0].x > value || VerticesPoints[VerticesPoints.Count - 1].x < value)
+        if (VerticesPoints[0].x > Var || VerticesPoints[VerticesPoints.Count - 1].x < Var)
         {
             return 0;
         }
@@ -87,24 +91,24 @@ public class FuzzySet
         {
             if(Type == Types.Triangle)
             {
-                if(value <= VerticesPoints[1].x)
+                if(Var <= VerticesPoints[1].x)
                 {
-                    return Functions[0].CalculeValue(value);
+                    return Functions[0].CalculeValue(Var);
                 }
                 else
                 {
-                    return Functions[1].CalculeValue(value);
+                    return Functions[1].CalculeValue(Var);
                 }
             }
             else if(Type == Types.Trapezium)
             {
-                if (value <= VerticesPoints[1].x)
+                if (Var <= VerticesPoints[1].x)
                 {
-                    return Functions[0].CalculeValue(value);
+                    return Functions[0].CalculeValue(Var);
                 }
-                else if( value >= VerticesPoints[2].x)
+                else if( Var >= VerticesPoints[2].x)
                 {
-                    return Functions[1].CalculeValue(value);
+                    return Functions[1].CalculeValue(Var);
                 }
                 else
                 {
