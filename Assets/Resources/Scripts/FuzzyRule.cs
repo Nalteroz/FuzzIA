@@ -4,18 +4,38 @@ using UnityEngine;
 
 public class FuzzyRule
 {
-    public List<FuzzyValue> Conditions { get; private set; }
+    public FuzzyValue[] Conditions { get; private set; }
     public FuzzySet Output { get; private set; }
     public LogicOperation Operation { get; private set; }
+    public Dictionary<string, Range> Intensities = new Dictionary<string, Range>();
 
     public enum LogicOperation
     {
         And,
         Or,
     }
-    public FuzzyRule(List<FuzzyValue> Conditions, LogicOperation Operation, FuzzySet Output)
+
+    public enum Intensity
     {
-        if(Conditions.Count == 0)
+        VeryLow,
+        Low,
+        Average,
+        High,
+        VeryHigh
+    }
+
+    public void SetIntensity()
+    {
+        Intensities["VeryLow"] = new Range(0, 0.2f);
+        Intensities["Low"] = new Range(0.2f, 0.4f);
+        Intensities["Average"] = new Range(0.4f, 0.6f);
+        Intensities["High"] = new Range(0.6f, 0.8f);
+        Intensities["VeryHigh"] = new Range(0.8f, 1);
+    }
+
+    public FuzzyRule(FuzzyValue[] Conditions, LogicOperation Operation, FuzzySet Output)
+    {
+        if(Conditions.Length == 0)
         {
             throw new System.ArgumentException("Erro on create rule: Invalid argument!");
         }
@@ -75,6 +95,31 @@ public class FuzzyRule
 
         return Answer;
     }
+    
+}
+
+public class RuleImput
+{
+    public Range Intensity;
+    public FuzzySet Set;
+
+    public RuleImput(FuzzySet set, Range intensity = null)
+    {
+        Intensity = intensity;
+        Set = set;
+    }
+
+    public float isTrue()
+    {
+        float Value = Set.IsInDomain();
+        if ((Value >= Intensity.Begin && Value <= Intensity.End) || Intensity == null)
+        {
+            return Value;
+        }
+        else return 0;
+        
+    }
 
 }
+
 

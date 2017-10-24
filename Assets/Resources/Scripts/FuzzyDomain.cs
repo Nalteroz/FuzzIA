@@ -7,14 +7,13 @@ public class FuzzyDomain
     public int ID;
     public string Name;
     public float Var{ get; private set; }
-    public float[] Range { get; private set; }
+    public Range Range { get; private set; }
     public List<FuzzySet> FuzzySets { get; private set; }
     public List<FuzzyValue> CurrentMembership { get; private set; }
 
     public FuzzyDomain(string Name, float RangeBegin, float RangeEnd)
     {
         FuzzySets = new List<FuzzySet>();
-        SetValue(RangeBegin);
         this.Name = Name;
         if (RangeBegin < RangeEnd) SetRange(RangeBegin, RangeEnd);
         else
@@ -25,7 +24,7 @@ public class FuzzyDomain
 
     public void SetValue(float value)
     {
-        if(value< Range[0] || value > Range[1])
+        if(value < Range.Begin || value > Range.End)
         {
             throw new System.FormatException("Erro in set value. The value is not on the range!");
         }
@@ -39,24 +38,21 @@ public class FuzzyDomain
             CurrentMembership = GetMembership();
         }
     }
-
     public string str()
     {
         string Out = "";
         Out += "Domain name: " + Name + "\n";
-        Out += "Range: " + "[" + Range[0].ToString() + ";" + Range[1].ToString() + "]" + "\n";
+        Out += "Range: " + "[" + Range.Begin.ToString() + ";" + Range.End.ToString() + "]" + "\n";
         foreach(FuzzySet Set in FuzzySets)
         {
             Out += Set.str();
         }
         return Out;
     }
-
     public void SetRange(float begin, float end)
     {
-        Range = new float[] { begin, end };
+        Range = new Range(begin, end);
     }
-
     public void AddSet(string name, float[] vertices)
     {
         if(FuzzySets.Exists(f => f.Name == name ))
@@ -84,6 +80,18 @@ public class FuzzyDomain
             FuzzySets.Remove(Set);
         }
     }
+    public FuzzySet GetSet(string name)
+    {
+        FuzzySet Set = FuzzySets.Find(set => set.Name == name);
+        if(Set!=null)
+        {
+            return Set;
+        }
+        else
+        {
+            throw new System.ArgumentException("Erro in GetSet: There is no set with the name " + name);
+        }
+    }
     public List<FuzzyValue> GetMembership()
     {
         List<FuzzyValue> Answer = new List<FuzzyValue>();
@@ -109,3 +117,5 @@ public class FuzzyValue
         Value = value;
     }
 }
+
+

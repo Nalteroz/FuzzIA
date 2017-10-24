@@ -40,3 +40,21 @@ public class Vector
 	}
 	
 }
+
+public class Range
+{
+    public float Begin { get; private set; }
+    public float End { get; private set; }
+
+    public void SetRange(float begin, float end)
+    {
+        Begin = begin;
+        End = end;
+    }
+
+    public Range(float begin, float end)
+    {
+        Begin = begin;
+        End = end;
+    }
+}

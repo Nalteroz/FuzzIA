@@ -6,7 +6,9 @@ public class TestScript : MonoBehaviour
 {
     FuzzyDomain Distance = new FuzzyDomain("Distance", 0, 10);
     FuzzyDomain High = new FuzzyDomain("High", 0, 10);
+    FuzzyDomain Action = new FuzzyDomain("Action", 0, 1);
     FuzzyRule Rule;
+
     List<FuzzyValue> Answer;
     
 
@@ -19,12 +21,13 @@ public class TestScript : MonoBehaviour
         High.AddSet("Low", new float[] { 0, 0, 2, 5 });
         High.AddSet("Average", new float[] { 3, 5, 7 });
         High.AddSet("High", new float[] { 5, 8, 10, 10 });
+        Action.AddSet("Shoot", new float[] { 0, 0, 1 });
+        Action.AddSet("Run", new float[] { 0, 1, 1 });
         Debug.Log(Distance.str());
-        Answer = Distance.GetMembership(4);
-        foreach(FuzzyValue Out in Answer)
-        {
-            Debug.Log("["+Out.Set.Name + ";" + Out.Value.ToString()+"]");
-        }
+        Distance.SetValue(4);
+        High.SetValue(6);
+        
+
     }
 	
 }
