@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class FuzzyRule
 {
-    public FuzzyValue[] Conditions { get; private set; }
-    public FuzzySet Output { get; private set; }
-    public LogicOperation Operation { get; private set; }
-    public Dictionary<string, Range> Intensities = new Dictionary<string, Range>();
+    private FuzzyController Controller;
+    private List<RuleParameter> Conditions;
+    private string Operation;
+    private FuzzyValue Output;
+    private Dictionary<string, Range> Intensities = new Dictionary<string, Range>();
+    private Dictionary<string, LogicOperation> Operations = new Dictionary<string, LogicOperation>();
 
     public enum LogicOperation
     {
@@ -15,101 +17,186 @@ public class FuzzyRule
         Or,
     }
 
-    public enum Intensity
-    {
-        VeryLow,
-        Low,
-        Average,
-        High,
-        VeryHigh
-    }
-
     public void SetIntensity()
     {
-        Intensities["VeryLow"] = new Range(0, 0.2f);
-        Intensities["Low"] = new Range(0.2f, 0.4f);
-        Intensities["Average"] = new Range(0.4f, 0.6f);
-        Intensities["High"] = new Range(0.6f, 0.8f);
-        Intensities["VeryHigh"] = new Range(0.8f, 1);
+        Intensities.Add("very little", new Range(0, 0.2f));
+        Intensities.Add("little", new Range(0.2f, 0.4f));
+        Intensities.Add("Average", new Range(0.4f, 0.6f));
+        Intensities.Add("much", new Range(0.6f, 0.8f));
+        Intensities.Add("very much", new Range(0.8f, 1));
     }
 
-    public FuzzyRule(FuzzyValue[] Conditions, LogicOperation Operation, FuzzySet Output)
+    public void SetOperations()
     {
-        if(Conditions.Length == 0)
-        {
-            throw new System.ArgumentException("Erro on create rule: Invalid argument!");
-        }
-        else
-        {
-            this.Conditions = Conditions;
-            this.Operation = Operation;
-            this.Output = Output;
-        }
+        Operations.Add("and", LogicOperation.And);
+        Operations.Add("or", LogicOperation.Or);
     }
 
-    public FuzzyValue FulfillRule()
+    public bool IsIntensity(string word)
     {
-        FuzzyValue Answer = new FuzzyValue(Output, 0);
-        float NotValue = 0, DomainValue = 0;
+        if (Intensities.ContainsKey(word)) return true;
+        else return false;
+    }
+
+    public bool IsOperation(string word)
+    {
+        if (Operations.ContainsKey(word)) return true;
+        else return false;
+    }
+
+    public bool IsSet(string word)
+    {
+        if (Controller.SetsDictionary.ContainsKey(word)) return true;
+        else return false;
+    }
 
 
-        if (Conditions[0].NotFlag) Answer.Value = 1 - Conditions[0].Set.IsInDomain();
-        else Answer.Value = Conditions[0].Set.IsInDomain();
+    public void SentenceHandler(string sentence)
+    {
+        int State = 0, WordIdx = 0;
+        bool End = false;
+        List<RuleParameter> conditions = new List<RuleParameter>();
+        FuzzyValue output = null;
+        string RuleOperation = null;
+        string LowerSentence = sentence.ToLower();
+        string[] SplitedSentence = LowerSentence.Split(' ');
 
-        switch(Operation)
+        while(!End)
         {
-            case LogicOperation.And:
-                foreach(FuzzyValue Condition in Conditions)
-                {
-                    DomainValue = Condition.Set.IsInDomain();
-                    if (Condition.NotFlag)
+            switch (State)
+            {
+                case 0:
+                    if (SplitedSentence[WordIdx] == "if")
                     {
-                        NotValue = 1 - DomainValue;
-                        if (NotValue > Answer.Value) Answer.Value = NotValue;
+                        State++;
+                        WordIdx++;
                     }
                     else
                     {
-                        if (DomainValue > Answer.Value) Answer.Value = DomainValue;
+                        SentenceErro(SplitedSentence[WordIdx]);
+                        return;
                     }
-                }
-                break;
-            case LogicOperation.Or:
-                foreach (FuzzyValue Condition in Conditions)
-                {
-                    DomainValue = Condition.Set.IsInDomain();
-                    if (Condition.NotFlag)
+                    break;
+                case 1:
+                    if (SplitedSentence[WordIdx] == "not" ||IsIntensity(SplitedSentence[WordIdx]) || IsSet(SplitedSentence[WordIdx]))
                     {
-                        NotValue = 1 - DomainValue;
-                        if (NotValue < Answer.Value) Answer.Value = NotValue;
+                        bool notflag = false;
+                        Range intensity = null;
+                        FuzzySet set;
+                        RuleParameter NewParameter;
+                        if(SplitedSentence[WordIdx] == "not")
+                        {
+                            notflag = true;
+                            WordIdx++;
+                        }
+                        if (IsIntensity(SplitedSentence[WordIdx]))
+                        {
+                            intensity = Intensities[SplitedSentence[WordIdx]];
+                            WordIdx++;
+                        }
+                        if (IsSet(SplitedSentence[WordIdx]))
+                        {
+                            set = Controller.SetsDictionary[SplitedSentence[WordIdx]];
+                            NewParameter = new RuleParameter(set, intensity, notflag);
+                            conditions.Add(NewParameter);
+                        }
+                        else
+                        {
+                            SentenceErro(SplitedSentence[WordIdx]);
+                            return;
+                        }
+                        State++;
+                        WordIdx++;
                     }
                     else
                     {
-                        if (DomainValue < Answer.Value) Answer.Value = DomainValue;
+                        SentenceErro(SplitedSentence[WordIdx]);
+                        return;
                     }
-                }
-                break;
-            default:
-                Answer.Value = 0;
-                break;
+                    break;
+                case 2:
+                    if (IsOperation(SplitedSentence[WordIdx]) && (Operation==null || Operation == SplitedSentence[WordIdx]))
+                    {
+                        RuleOperation = SplitedSentence[WordIdx];
+                        State++;
+                        WordIdx++;
+                    }
+                    else
+                    {
+                        SentenceErro(SplitedSentence[WordIdx]);
+                        return;
+                    }
+                    break;
+                case 3:
+                    if (SplitedSentence[WordIdx] == "not" || IsIntensity(SplitedSentence[WordIdx]) || IsSet(SplitedSentence[WordIdx]))
+                    {
+                        State=1;
+                    }
+                    else if(SplitedSentence[WordIdx] == "then")
+                    {
+                        State++;
+                        WordIdx++;
+                    }
+                    else
+                    {
+                        SentenceErro(SplitedSentence[WordIdx]);
+                        return;
+                    }
+                    break;
+                case 4:
+                    if (IsSet(SplitedSentence[WordIdx]))
+                    {
+                        FuzzySet set;
+                        set = Controller.SetsDictionary[SplitedSentence[WordIdx]];
+                        output = new FuzzyValue(set);
+                        State++;
+                        WordIdx++;
+                    }
+                    else
+                    {
+                        SentenceErro(SplitedSentence[WordIdx]);
+                        return;
+                    }
+                    break;
+                case 5:
+                    if (WordIdx == SplitedSentence.Length)
+                    {
+                        Conditions = conditions;
+                        Operation = RuleOperation;
+                        Output = output;
+                        End = true;
+                    }
+                    else
+                    {
+                        SentenceErro(SplitedSentence[WordIdx]);
+                        return;
+                    }
+                    break;
+            }
         }
+    }
 
-        return Answer;
+    private void SentenceErro(string erro)
+    {
+        throw new System.ArgumentException("Erro in sentence of the rule: Invalid sintaxe on " + erro);
     }
     
 }
 
-public class RuleImput
+public class RuleParameter
 {
+    public bool NotFlag = false;
     public Range Intensity;
-    public FuzzySet Set;
+    public FuzzySet Set { get; private set; }
 
-    public RuleImput(FuzzySet set, Range intensity = null)
+    public RuleParameter(FuzzySet set, Range intensity = null, bool notflag = false)
     {
-        Intensity = intensity;
         Set = set;
+        Intensity = intensity;
+        NotFlag = notflag;
     }
 
-    public float isTrue()
+    public float IsTrue()
     {
         float Value = Set.IsInDomain();
         if ((Value >= Intensity.Begin && Value <= Intensity.End) || Intensity == null)

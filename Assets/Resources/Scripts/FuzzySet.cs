@@ -5,16 +5,17 @@ using UnityEngine;
 public class FuzzySet
 {
     public int ID;
+    public FuzzyDomain Domain { get; private set; }
     public string Name;
     public float Var { get; private set; }
     private List<Vector> VerticesPoints = new List<Vector>();
     private Function[] Functions = new Function[2];
     public Types Type{get; private set;}
     
-    public FuzzySet(string Name, float[] Vertices)
+    public FuzzySet(FuzzyDomain domain,string name, float[] vertices)
     {
-        this.Name = Name;
-        SetVertices(Vertices);
+        Name = name;
+        SetVertices(vertices);
     }
 
     public string str()

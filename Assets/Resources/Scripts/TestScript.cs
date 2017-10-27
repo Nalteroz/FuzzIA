@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
+    FuzzyController Controller = new FuzzyController();
     FuzzyDomain Distance = new FuzzyDomain("Distance", 0, 10);
     FuzzyDomain High = new FuzzyDomain("High", 0, 10);
     FuzzyDomain Action = new FuzzyDomain("Action", 0, 1);

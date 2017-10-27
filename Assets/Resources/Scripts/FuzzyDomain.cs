@@ -5,16 +5,18 @@ using System.Collections.Generic;
 public class FuzzyDomain
 {
     public int ID;
+    private FuzzyController Controller;
     public string Name;
     public float Var{ get; private set; }
     public Range Range { get; private set; }
     public List<FuzzySet> FuzzySets { get; private set; }
     public List<FuzzyValue> CurrentMembership { get; private set; }
 
-    public FuzzyDomain(string Name, float RangeBegin, float RangeEnd)
+    public FuzzyDomain(FuzzyController controller, string name, float RangeBegin, float RangeEnd)
     {
+        Controller = controller;
         FuzzySets = new List<FuzzySet>();
-        this.Name = Name;
+        Name = name;
         if (RangeBegin < RangeEnd) SetRange(RangeBegin, RangeEnd);
         else
         {
@@ -55,13 +57,16 @@ public class FuzzyDomain
     }
     public void AddSet(string name, float[] vertices)
     {
+        FuzzySet NewSet;
         if(FuzzySets.Exists(f => f.Name == name ))
         {
             throw new System.InvalidOperationException("Erro on add set: A set with the name " + name + " already exist!");
         }
         else
         {
-            FuzzySets.Add(new FuzzySet(name, vertices));
+            NewSet = new FuzzySet(this, name, vertices);
+            FuzzySets.Add(NewSet);
+            Controller.AddSetOnDictionary(NewSet);
         }
     }
     public void RemoveSet(string name)
@@ -78,6 +83,7 @@ public class FuzzyDomain
         else
         {
             FuzzySets.Remove(Set);
+            Controller.RemoveSetOfDictionary(Set);
         }
     }
     public FuzzySet GetSet(string name)
@@ -107,13 +113,12 @@ public class FuzzyDomain
 
 public class FuzzyValue
 {
-    public bool NotFlag = false;
     public FuzzySet Set;
     public float Value;
 
-    public FuzzyValue(FuzzySet Set, float value)
+    public FuzzyValue(FuzzySet set, float value = 0)
     {
-        this.Set = Set;
+        Set = set;
         Value = value;
     }
 }
