@@ -1,104 +1,107 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class FuzzyDomain
+public abstract class FuzzyDomain
 {
-    public int ID;
-    private FuzzyController Controller;
+    
     public string Name;
-    public float Var{ get; private set; }
-    public Range Range { get; private set; }
+    public Range DomainRange { get; private set; }
     public List<FuzzySet> FuzzySets { get; private set; }
+    public Dictionary<string, FuzzySet> SetsDictionary { get; private set; }
     public List<FuzzyValue> CurrentMembership { get; private set; }
 
-    public FuzzyDomain(FuzzyController controller, string name, float RangeBegin, float RangeEnd)
+    public FuzzyDomain(string name, Range range)
     {
-        Controller = controller;
         FuzzySets = new List<FuzzySet>();
+        SetsDictionary = new Dictionary<string, FuzzySet>();
         Name = name;
-        if (RangeBegin < RangeEnd) SetRange(RangeBegin, RangeEnd);
-        else
-        {
-            throw new System.InvalidOperationException("Erro on create domain: Range incorrect in FuzzyDomain!");
-        }
+        DomainRange = range;
     }
 
-    public void SetValue(float value)
+    public void SetRange(Range range)
     {
-        if(value < Range.Begin || value > Range.End)
+        float Smaller = float.PositiveInfinity, Biggest = float.NegativeInfinity;
+        if (range.Begin <= DomainRange.Begin && range.End >= DomainRange.End)
         {
-            throw new System.FormatException("Erro in set value. The value is not on the range!");
+            DomainRange = range;
         }
         else
         {
-            Var = value;
             foreach(FuzzySet Set in FuzzySets)
             {
-                Set.SetValue(Var);
+                if (Set.SetRange.Begin < Smaller) Smaller = Set.SetRange.Begin;
+                if (Set.SetRange.End > Biggest) Biggest = Set.SetRange.End;
             }
-            CurrentMembership = GetMembership();
+            if(range.Begin > Smaller || range.End < Biggest)
+            {
+                throw new System.ArgumentException("Erro in SetRange on "+Name+". Can't set a range smaller ou bigger then the range of the sets.");
+            }
+            else
+            {
+                DomainRange = range;
+            }
         }
     }
-    public string str()
-    {
-        string Out = "";
-        Out += "Domain name: " + Name + "\n";
-        Out += "Range: " + "[" + Range.Begin.ToString() + ";" + Range.End.ToString() + "]" + "\n";
-        foreach(FuzzySet Set in FuzzySets)
-        {
-            Out += Set.str();
-        }
-        return Out;
-    }
-    public void SetRange(float begin, float end)
-    {
-        Range = new Range(begin, end);
-    }
-    public void AddSet(string name, float[] vertices)
+    public FuzzySet AddSet(string name, float[] vertices)
     {
         FuzzySet NewSet;
-        if(FuzzySets.Exists(f => f.Name == name ))
+        string setname = name.ToLower();
+        if (!SetsDictionary.ContainsKey(setname))
         {
-            throw new System.InvalidOperationException("Erro on add set: A set with the name " + name + " already exist!");
-        }
-        else
-        {
-            NewSet = new FuzzySet(this, name, vertices);
+            foreach (float vertice in vertices)
+            {
+                if (!DomainRange.IsInTheRange(vertice))
+                {
+                    throw new System.ArgumentException("Erro in AddSet on " + Name + ": The vertices is not in the range.");
+                }
+            }
+            NewSet = new FuzzySet(this, setname, vertices);
             FuzzySets.Add(NewSet);
-            Controller.AddSetOnDictionary(NewSet);
+            SetsDictionary.Add(setname, NewSet);
+            return NewSet;
         }
+        else throw new System.ArgumentException("Erro on AddSet to "+ Name +". A set with the name "+ setname +" already exist.");
     }
-    public void RemoveSet(string name)
+    public void AddSet(FuzzySet set)
     {
-        FuzzySet Set = FuzzySets.Find(f => f.Name == name);
-        RemoveSet(Set);
+        if (!SetsDictionary.ContainsKey(set.Name) && DomainRange.IsInTheRange(set.SetRange))
+        {
+            FuzzySets.Add(set);
+            SetsDictionary.Add(set.Name, set);
+        }
+        else throw new System.ArgumentException("Erro on CreateSet on "+Name+". The set already exist or is not in the range of the domain.");
+    }
+    public FuzzySet RemoveSet(string name)
+    {
+        FuzzySet Set;
+        if (!SetsDictionary.ContainsKey(name))
+        {
+            Set = SetsDictionary[name];
+            SetsDictionary.Remove(Set.Name);
+            FuzzySets.Remove(Set);
+            return Set;
+        }
+        else throw new System.ArgumentException("Erro in RemoveSet on " + Name + ": The set name "+ name +" do no exist in the domain.");
     }
     public void RemoveSet(FuzzySet Set)
     {
-        if (Set == null)
+        if (SetsDictionary.ContainsKey(Set.Name))
         {
-            throw new System.InvalidOperationException("Erro on remove set: The set not exist!");
-        }
-        else
-        {
+            SetsDictionary.Remove(Set.Name);
             FuzzySets.Remove(Set);
-            Controller.RemoveSetOfDictionary(Set);
         }
+        else throw new System.ArgumentException("Erro on remove set on"+ Name +": The set not exist!");
     }
     public FuzzySet GetSet(string name)
     {
-        FuzzySet Set = FuzzySets.Find(set => set.Name == name);
-        if(Set!=null)
+        if(SetsDictionary.ContainsKey(name))
         {
-            return Set;
+            return SetsDictionary[name];
         }
-        else
-        {
-            throw new System.ArgumentException("Erro in GetSet: There is no set with the name " + name);
-        }
+        else throw new System.ArgumentException("Erro in GetSet on "+ Name +": There is no set with the name " + name);
     }
-    public List<FuzzyValue> GetMembership()
+    public void SetMembership()
     {
         List<FuzzyValue> Answer = new List<FuzzyValue>();
         float result = 0;
@@ -107,19 +110,7 @@ public class FuzzyDomain
             result = Set.IsInDomain();
             if (result > 0) Answer.Add(new FuzzyValue(Set, result));
         }
-        return Answer;
-    }
-}
-
-public class FuzzyValue
-{
-    public FuzzySet Set;
-    public float Value;
-
-    public FuzzyValue(FuzzySet set, float value = 0)
-    {
-        Set = set;
-        Value = value;
+        CurrentMembership = Answer;
     }
 }
 

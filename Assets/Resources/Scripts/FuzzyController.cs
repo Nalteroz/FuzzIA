@@ -1,42 +1,123 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class FuzzyController
 {
-    public List<FuzzyDomain> Domains { get; private set; }
-    public Dictionary<string, FuzzySet> SetsDictionary { get; private set; }
+    private List<ImputDomain> ImputDomainsList;
+    private List<OutputDomain> OutputDomainsList;
+    private List<FuzzyRule> RulesList;
+    public Dictionary<string, ImputDomain> ImputDomainsDictionary { get; private set; }
+    public Dictionary<string, OutputDomain> OutputDomainsDictionary { get; private set; }
+
 
     public FuzzyController()
     {
-        SetsDictionary = new Dictionary<string, FuzzySet>();
+        ImputDomainsDictionary = new Dictionary<string, ImputDomain>();
+        OutputDomainsDictionary = new Dictionary<string, OutputDomain>();
+        ImputDomainsList = new List<ImputDomain>();
+        OutputDomainsList = new List<OutputDomain>();
+        RulesList = new List<FuzzyRule>();
     }
 
-    public FuzzyDomain AddDomain(string name, float RangeBegin, float RangeEnd)
+    public ImputDomain AddImputDomain(string name, Range range)
     {
-        FuzzyDomain NewDomain = new FuzzyDomain(this, name, RangeBegin, RangeEnd);
-        Domains.Add(NewDomain);
-        return NewDomain;
-    }
-
-    public void RemoveDomain(FuzzyDomain domain)
-    {
-        if (domain == null || !Domains.Exists(d => d == domain))
+        ImputDomain NewDomain;
+        string LowName = name.ToLower();
+        if (ImputDomainsDictionary.ContainsKey(LowName))
         {
-            throw new System.InvalidOperationException("Erro on remove set: The set not exist!");
+            throw new System.ArgumentException("Erro on creation of ImputDomain. Already exist a domain with the name " + name);
         }
         else
         {
-            Domains.Remove(domain);
+            NewDomain = new ImputDomain(this, LowName, range);
+            ImputDomainsList.Add(NewDomain);
+            ImputDomainsDictionary.Add(LowName, NewDomain);
+        }
+        return NewDomain;
+    }
+    public OutputDomain AddOutputDomain(string name, Range range)
+    {
+        OutputDomain NewDomain;
+        string LowName = name.ToLower();
+        if (OutputDomainsDictionary.ContainsKey(LowName))
+        {
+            throw new System.ArgumentException("Erro on creation of ImputDomain. Already exist a domain with the name " + name);
+        }
+        else
+        {
+            NewDomain = new OutputDomain(this, LowName, range);
+            OutputDomainsList.Add(NewDomain);
+            OutputDomainsDictionary.Add(LowName, NewDomain);
+        }
+        return NewDomain;
+    }
+    public void RemoveImputDomain(string name)
+    {
+        ImputDomain Domain;
+        if (ImputDomainsDictionary.ContainsKey(name))
+        {
+            Domain = ImputDomainsDictionary[name];
+            ImputDomainsDictionary.Remove(name);
+            ImputDomainsList.Remove(Domain);
+        }
+        else
+        {
+            throw new System.ArgumentNullException("Erro on RemoveImputDomain: The domain name "+ name +" not exist!");
         }
     }
-
-    public void AddSetOnDictionary(FuzzySet set)
+    public void RemoveImputDomain(ImputDomain domain)
     {
-        SetsDictionary.Add(set.Name, set);
+        ImputDomain Domain;
+        if (ImputDomainsDictionary.ContainsKey(domain.Name))
+        {
+            Domain = ImputDomainsDictionary[domain.Name];
+            ImputDomainsDictionary.Remove(Domain.Name);
+            ImputDomainsList.Remove(Domain);
+        }
+        else
+        {
+            throw new System.ArgumentNullException("Erro on RemoveImputDomain: The domain name " + domain.Name + " not exist!");
+        }
     }
-    public void RemoveSetOfDictionary(FuzzySet set)
+    public void RemoveOutputDomain(string name)
     {
-        SetsDictionary.Remove(set.Name);
+        OutputDomain Domain;
+        if (OutputDomainsDictionary.ContainsKey(name))
+        {
+            Domain = OutputDomainsDictionary[name];
+            OutputDomainsDictionary.Remove(name);
+            OutputDomainsList.Remove(Domain);
+        }
+        else
+        {
+            throw new System.ArgumentNullException("Erro on RemoveImputDomain: The domain name " + name + " not exist!");
+        }
+    }
+    public void RemoveOutputDomain(OutputDomain domain)
+    {
+        OutputDomain Domain;
+        if (OutputDomainsDictionary.ContainsKey(domain.Name))
+        {
+            Domain = OutputDomainsDictionary[domain.Name];
+            OutputDomainsDictionary.Remove(Domain.Name);
+            OutputDomainsList.Remove(Domain);
+        }
+        else
+        {
+            throw new System.ArgumentNullException("Erro on RemoveOutputDomain: The domain name " + domain.Name + " not exist!");
+        }
+    }
+    public FuzzyRule AddRule(string sentence)
+    {
+        FuzzyRule NewRule = new FuzzyRule(this, sentence);
+        RulesList.Add(NewRule);
+        return NewRule;
+    }
+    public void FulfillAllRules()
+    {
+        foreach (FuzzyRule rule in RulesList)
+        {
+            rule.FulfillRule();
+        }
     }
 }

@@ -83,6 +83,8 @@
     <Compile Include="Assets\Resources\Scripts\FuzzyDomain.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyRule.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzySet.cs" />
+    <Compile Include="Assets\Resources\Scripts\ImputDomain.cs" />
+    <Compile Include="Assets\Resources\Scripts\OutputDomain.cs" />
     <Compile Include="Assets\Resources\Scripts\TestScript.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,29 +5,32 @@ using UnityEngine;
 public class TestScript : MonoBehaviour
 {
     FuzzyController Controller = new FuzzyController();
-    FuzzyDomain Distance = new FuzzyDomain("Distance", 0, 10);
-    FuzzyDomain High = new FuzzyDomain("High", 0, 10);
-    FuzzyDomain Action = new FuzzyDomain("Action", 0, 1);
-    FuzzyRule Rule;
-
-    List<FuzzyValue> Answer;
+    ImputDomain Imput1, Imput2;
+    OutputDomain Output;
+    FuzzyRule Rule1, Rule2;
     
 
 	// Use this for initialization
 	void Start ()
     {
-        Distance.AddSet("Close", new float[] { 0, 0, 2, 5});
-        Distance.AddSet("Medium", new float[] { 3, 5, 7 });
-        Distance.AddSet("Far", new float[] { 5, 8, 10, 10 });
-        High.AddSet("Low", new float[] { 0, 0, 2, 5 });
-        High.AddSet("Average", new float[] { 3, 5, 7 });
-        High.AddSet("High", new float[] { 5, 8, 10, 10 });
-        Action.AddSet("Shoot", new float[] { 0, 0, 1 });
-        Action.AddSet("Run", new float[] { 0, 1, 1 });
-        Debug.Log(Distance.str());
-        Distance.SetValue(4);
-        High.SetValue(6);
-        
+        Imput1 = Controller.AddImputDomain("Distance", new Range(0, 10));
+        Imput2 = Controller.AddImputDomain("Velocity", new Range(0, 10));
+        Output = Controller.AddOutputDomain("You", new Range(0, 10));
+        Imput1.AddSet("Close", new float[] { 0, 0, 3, 5});
+        Imput1.AddSet("Medium", new float[] { 3, 5, 7 });
+        Imput1.AddSet("Far", new float[] { 5, 7, 10, 10 });
+        Imput2.AddSet("Slow", new float[] { 0, 0, 3, 5 });
+        Imput2.AddSet("Average", new float[] { 3, 5, 7 });
+        Imput2.AddSet("Fast", new float[] { 5, 7, 10, 10 });
+        Output.AddSet("Walk", new float[] { 0, 0, 3, 5});
+        Output.AddSet("Run", new float[] { 3, 5, 7 });
+        Output.AddSet("Dash", new float[] { 5, 7, 10, 10 });
+        Controller.AddRule("if distance is close and velocity is average then You is dash");
+        Imput1.SetX(4.5f);
+        Imput2.SetX(6.5f);
+        Controller.FulfillAllRules();
+        Debug.Log(Output.Defuzzyfication());
+
 
     }
 	
