@@ -4,21 +4,24 @@ using UnityEngine;
 
 public class FuzzyRule
 {
-    private FuzzyController Controller;
-    private List<RuleParameter> Conditions;
-    private string Operation;
-    private FuzzySet Output;
-    public Dictionary<string, Range> Intensities = new Dictionary<string, Range>();
-    private Dictionary<string, LogicOperation> Operations = new Dictionary<string, LogicOperation>();
+    public List<RuleParameter> ConditionsList { get; private set; }
+    public string RuleOperation { get; private set; }
+    public OutputSet OutputSet { get; private set; }
+    private Dictionary<string, Range> IntensitiesDictionary = new Dictionary<string, Range>();
+    private Dictionary<string, LogicOperation> OperationsDictionary = new Dictionary<string, LogicOperation>();
 
     public FuzzyRule(FuzzyController controller, string sentence)
     {
-        Controller = controller;
         SetIntensity();
         SetOperations();
-        SentenceHandler(sentence);
+        SentenceHandler(controller, sentence);
     }
-
+    public FuzzyRule(List<RuleParameter> conditions, string operation, OutputSet output)
+    {
+        ConditionsList = conditions;
+        RuleOperation = operation;
+        OutputSet = output;
+    }
     public enum LogicOperation
     {
         And,
@@ -28,61 +31,66 @@ public class FuzzyRule
     {
         string Out = "";
         Out += "Conditions:\n";
-        foreach (RuleParameter condition in Conditions) Out += condition.Str();
-        Out += "Operation: " + Operation + "\n";
+        foreach (RuleParameter condition in ConditionsList) Out += condition.Str();
+        Out += "Operation: " + RuleOperation + "\n";
         Out += "Output:\n";
-        Out += Output.Str();
+        Out += OutputSet.Str();
         return Out;
     }
     private void SetIntensity()
     {
-        Intensities.Add("verylittle", new Range(0, 0.2f));
-        Intensities.Add("little", new Range(0, 0.4f));
-        Intensities.Add("rasoable", new Range(0.4f, 0.6f));
-        Intensities.Add("much", new Range(0.6f, 1));
-        Intensities.Add("verymuch", new Range(0.8f, 1));
+        IntensitiesDictionary.Add("verylittle", new Range(0, 0.2f));
+        IntensitiesDictionary.Add("little", new Range(0.2f, 0.4f));
+        IntensitiesDictionary.Add("rasoable", new Range(0.4f, 0.6f));
+        IntensitiesDictionary.Add("very", new Range(0.6f, 0.8f));
+        IntensitiesDictionary.Add("verymuch", new Range(0.8f, 1));
     }
     private void SetOperations()
     {
-        Operations.Add("and", LogicOperation.And);
-        Operations.Add("or", LogicOperation.Or);
+        OperationsDictionary.Add("and", LogicOperation.And);
+        OperationsDictionary.Add("or", LogicOperation.Or);
     }
-    public bool IsImputDomain(string word)
+    private bool IsImputDomain(FuzzyController Controller, string word)
     {
         if (Controller.ImputDomainsDictionary.ContainsKey(word)) return true;
         else return false;
     }
-    public bool IsOutputDomain(string word)
+    private bool IsOutputDomain(FuzzyController Controller, string word)
     {
         if (Controller.OutputDomainsDictionary.ContainsKey(word)) return true;
         else return false;
     }
-    public bool IsSet(FuzzyDomain domain, string word)
+    private bool IsInputSet(InputDomain domain, string word)
     {
         if (domain.SetsDictionary.ContainsKey(word)) return true;
         else return false;
     }
-    public bool IsIntensity(string word)
+    private bool IsOutputSet(OutputDomain domain, string word)
     {
-        if (Intensities.ContainsKey(word)) return true;
+        if (domain.SetsDictionary.ContainsKey(word)) return true;
         else return false;
     }
-    public bool IsOperation(string word)
+    private bool IsIntensity(string word)
     {
-        if (Operations.ContainsKey(word)) return true;
+        if (IntensitiesDictionary.ContainsKey(word)) return true;
         else return false;
     }
-    public void SentenceHandler(string sentence)
+    private bool IsOperation(string word)
+    {
+        if (OperationsDictionary.ContainsKey(word)) return true;
+        else return false;
+    }
+    public void SentenceHandler(FuzzyController Controller, string sentence)
     {
         int State = 0, WordIdx = 0;
         bool End = false;
         List<RuleParameter> NewConditions = new List<RuleParameter>();
-        FuzzySet NewOutput = null;
+        OutputSet NewOutput = null;
         string RuleOperation = null;
         string LowerSentence = sentence.ToLower();
         string[] SplitedSentence = LowerSentence.Split(' ');
 
-        ImputDomain CurrentImputDomain = null;
+        InputDomain CurrentImputDomain = null;
         OutputDomain CurrentOutputDomain = null;
 
         while (!End)
@@ -103,7 +111,7 @@ public class FuzzyRule
                     break;
 
                 case 1:
-                    if(IsImputDomain(SplitedSentence[WordIdx]) && SplitedSentence[WordIdx + 1] == "is")
+                    if(IsImputDomain(Controller, SplitedSentence[WordIdx]) && SplitedSentence[WordIdx + 1] == "is")
                     {
                         CurrentImputDomain = Controller.ImputDomainsDictionary[SplitedSentence[WordIdx]];
                         WordIdx += 2;
@@ -118,10 +126,10 @@ public class FuzzyRule
                 case 2:
                     bool NotFlag = false;
                     Range CurrentIntensity = null;
-                    FuzzySet CurrentSet;
-                    RuleParameter NewParameter;
+                    InputSet CurrentSet = null;
+                    RuleParameter NewParameter = null;
 
-                    if (SplitedSentence[WordIdx] == "not" ||IsIntensity(SplitedSentence[WordIdx]) || IsSet(CurrentImputDomain, SplitedSentence[WordIdx]))
+                    if (SplitedSentence[WordIdx] == "not" || IsIntensity(SplitedSentence[WordIdx]) || IsInputSet(CurrentImputDomain, SplitedSentence[WordIdx]))
                     {
 
                         if(SplitedSentence[WordIdx] == "not")
@@ -131,10 +139,10 @@ public class FuzzyRule
                         }
                         if (IsIntensity(SplitedSentence[WordIdx]))
                         {
-                            CurrentIntensity = Intensities[SplitedSentence[WordIdx]];
+                            CurrentIntensity = IntensitiesDictionary[SplitedSentence[WordIdx]];
                             WordIdx++;
                         }
-                        if (IsSet(CurrentImputDomain, SplitedSentence[WordIdx]))
+                        if (IsInputSet(CurrentImputDomain, SplitedSentence[WordIdx]))
                         {
                             CurrentSet = CurrentImputDomain.SetsDictionary[SplitedSentence[WordIdx]];
                             NewParameter = new RuleParameter(CurrentSet, CurrentIntensity, NotFlag);
@@ -174,10 +182,10 @@ public class FuzzyRule
                     }
                     break;
                 case 4:
-                    if (IsOutputDomain(SplitedSentence[WordIdx]) && SplitedSentence[WordIdx + 1] == "is")
+                    if (IsOutputDomain(Controller, SplitedSentence[WordIdx]) && SplitedSentence[WordIdx + 1] == "is")
                     {
                         CurrentOutputDomain = Controller.OutputDomainsDictionary[SplitedSentence[WordIdx]];
-                        if(IsSet(CurrentOutputDomain, SplitedSentence[WordIdx + 2]))
+                        if(IsOutputSet(CurrentOutputDomain, SplitedSentence[WordIdx + 2]))
                         {
                             NewOutput = CurrentOutputDomain.SetsDictionary[SplitedSentence[WordIdx + 2]];
                         }
@@ -198,9 +206,9 @@ public class FuzzyRule
                 case 5:
                     if (WordIdx == SplitedSentence.Length)
                     {
-                        Conditions = NewConditions;
-                        Operation = RuleOperation;
-                        Output = NewOutput;
+                        ConditionsList = NewConditions;
+                        this.RuleOperation = RuleOperation;
+                        OutputSet = NewOutput;
                         End = true;
                     }
                     else
@@ -218,48 +226,47 @@ public class FuzzyRule
     }
     public void FulfillRule()
     {
-        float Result = Conditions[0].IsTrue(), CurrentValue;
-        if(Operation == "and")
+        float Result = ConditionsList[0].IsTrue(), CurrentValue;
+        if(RuleOperation == "and")
         {
-            for(int index = 1; index < Conditions.Count; index++)
+            for(int index = 1; index < ConditionsList.Count; index++)
             {
-                CurrentValue = Conditions[index].IsTrue();
+                CurrentValue = ConditionsList[index].IsTrue();
                 if(CurrentValue < Result)
                 {
                     Result = CurrentValue;
                 }
             }
         }
-        else if(Operation == "or")
+        else if(RuleOperation == "or")
         {
-            for (int index = 1; index < Conditions.Count; index++)
+            for (int index = 1; index < ConditionsList.Count; index++)
             {
-                CurrentValue = Conditions[index].IsTrue();
+                CurrentValue = ConditionsList[index].IsTrue();
                 if (CurrentValue > Result)
                 {
                     Result = CurrentValue;
                 }
             }
         }
-        Debug.Log(Result);
-        Output.SetXbyY(Result);
+        OutputSet.AddValue(Result);
     }
     
 }
 
 public class RuleParameter
 {
-    public bool NotFlag = false;
-    public Range Intensity = null;
-    public FuzzySet Set { get; private set; }
+    public bool NotFlag { get; private set; }
+    public Range Intensity { get; private set; }
+    public InputSet Set { get; private set; }
 
-    public RuleParameter(FuzzySet set, Range intensity = null, bool notflag = false)
+    public RuleParameter(InputSet set, Range intensity = null, bool notflag = false)
     {
         Set = set;
         Intensity = intensity;
         NotFlag = notflag;
     }
-    public void SetParameter(FuzzySet set, Range intensity = null, bool notflag = false)
+    public void SetParameter(InputSet set, Range intensity = null, bool notflag = false)
     {
         Set = set;
         Intensity = intensity;
@@ -270,7 +277,11 @@ public class RuleParameter
         float Value = Set.IsInDomain();
         if (Intensity == null || Intensity.IsInTheRange(Value))
         {
-            return Value;
+            if(NotFlag)
+            {
+                return 1 - Value;
+            }
+            else return Value;
         }
         else return 0;
         

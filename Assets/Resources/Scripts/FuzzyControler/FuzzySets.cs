@@ -5,7 +5,6 @@ using UnityEngine;
 public class FuzzySet
 {
     public int ID;
-    public FuzzyDomain Domain { get; private set; }
     public string Name;
     public Range SetRange { get; private set; }
     public float X { get; private set; }
@@ -13,9 +12,8 @@ public class FuzzySet
     private Function[] Functions = new Function[2];
     public Types Type{get; private set;}
     
-    public FuzzySet(FuzzyDomain domain,string name, float[] vertices)
+    public FuzzySet(string name, float[] vertices)
     {
-        Domain = domain;
         Name = name;
         X = float.NegativeInfinity;
         SetVertices(vertices);
@@ -40,8 +38,7 @@ public class FuzzySet
     }
     public void SetX(float x)
     {
-        if(Domain.DomainRange.IsInTheRange(x)) X = x;
-        else throw new System.ArgumentException("Erro in SetX on the set "+ Name +": The value is not on the range.");
+        X = x;
     }
     public void SetXbyY(float y)
     {
@@ -138,8 +135,8 @@ public class FuzzySet
                     return VerticesPoints[2].y;
                 }
             }
+            else return 0;
         }
-        return 0;
     }
     public CenterOfArea GetCenterOfArea()
     {
@@ -181,5 +178,30 @@ public class FuzzySet
             CenterOfArea = new CenterOfArea((SetRange.End - SetRange.Begin), 0);
             return CenterOfArea;
         }
+    }
+}
+
+public class InputSet : FuzzySet
+{
+    public InputDomain Domain { get; private set; }
+
+    public InputSet(InputDomain domain, string name, float[] vertices) : base(name, vertices)
+    {
+        Domain = domain;
+    }
+}
+
+public class OutputSet : FuzzySet
+{
+    public OutputDomain Domain { get; private set; }
+
+    public OutputSet(OutputDomain domain, string name, float[] vertices) : base(name, vertices)
+    {
+        Domain = domain;
+    }
+
+    public void AddValue(float value)
+    {
+        Domain.AddOutput(new FuzzyValue(this, value));
     }
 }

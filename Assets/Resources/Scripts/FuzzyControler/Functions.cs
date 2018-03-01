@@ -41,7 +41,8 @@
     public float CalculeX(float y)
     {
         if (a == 0 && b == 1) return Vector1.x;
-        else return (y - b) / a;
+        else if (y >= 0 && y <= 1) return (y - b) / a;
+        else throw new System.ArgumentException("Erro in CalculeX of Function: The y is out of the permited range [0,1]");
     }
 }
 
@@ -82,8 +83,13 @@ public class Range
     }
     public void SetRange(float begin, float end)
     {
-        if (begin >= end)
+        if (begin == end)
             throw new System.ArgumentException("Erro on create range: Range value invalid.");
+        else if(begin > end)
+        {
+            End = begin;
+            Begin = end;
+        }
         else
         {
             Begin = begin;

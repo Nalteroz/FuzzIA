@@ -3,25 +3,25 @@ using System.Collections.Generic;
 
 public class FuzzyController
 {
-    private List<ImputDomain> ImputDomainsList;
-    private List<OutputDomain> OutputDomainsList;
-    private List<FuzzyRule> RulesList;
-    public Dictionary<string, ImputDomain> ImputDomainsDictionary { get; private set; }
+    public List<InputDomain> ImputDomainsList { get; private set; }
+    public List<OutputDomain> OutputDomainsList { get; private set; }
+    public List<FuzzyRule> RulesList { get; private set; }
+    public Dictionary<string, InputDomain> ImputDomainsDictionary { get; private set; }
     public Dictionary<string, OutputDomain> OutputDomainsDictionary { get; private set; }
 
 
     public FuzzyController()
     {
-        ImputDomainsDictionary = new Dictionary<string, ImputDomain>();
+        ImputDomainsDictionary = new Dictionary<string, InputDomain>();
         OutputDomainsDictionary = new Dictionary<string, OutputDomain>();
-        ImputDomainsList = new List<ImputDomain>();
+        ImputDomainsList = new List<InputDomain>();
         OutputDomainsList = new List<OutputDomain>();
         RulesList = new List<FuzzyRule>();
     }
 
-    public ImputDomain AddImputDomain(string name, Range range)
+    public InputDomain AddImputDomain(string name, Range range)
     {
-        ImputDomain NewDomain;
+        InputDomain NewDomain;
         string LowName = name.ToLower();
         if (ImputDomainsDictionary.ContainsKey(LowName))
         {
@@ -29,7 +29,7 @@ public class FuzzyController
         }
         else
         {
-            NewDomain = new ImputDomain(this, LowName, range);
+            NewDomain = new InputDomain(this, LowName, range);
             ImputDomainsList.Add(NewDomain);
             ImputDomainsDictionary.Add(LowName, NewDomain);
         }
@@ -53,7 +53,7 @@ public class FuzzyController
     }
     public void RemoveImputDomain(string name)
     {
-        ImputDomain Domain;
+        InputDomain Domain;
         if (ImputDomainsDictionary.ContainsKey(name))
         {
             Domain = ImputDomainsDictionary[name];
@@ -65,9 +65,9 @@ public class FuzzyController
             throw new System.ArgumentNullException("Erro on RemoveImputDomain: The domain name "+ name +" not exist!");
         }
     }
-    public void RemoveImputDomain(ImputDomain domain)
+    public void RemoveImputDomain(InputDomain domain)
     {
-        ImputDomain Domain;
+        InputDomain Domain;
         if (ImputDomainsDictionary.ContainsKey(domain.Name))
         {
             Domain = ImputDomainsDictionary[domain.Name];
@@ -113,8 +113,22 @@ public class FuzzyController
         RulesList.Add(NewRule);
         return NewRule;
     }
+    public FuzzyRule AddRule(List<RuleParameter> conditions, string operation, OutputSet output)
+    {
+        FuzzyRule NewRule = new FuzzyRule(conditions, operation, output);
+        RulesList.Add(NewRule);
+        return NewRule;
+    }
+    public void AddRule(FuzzyRule rule)
+    {
+        RulesList.Add(rule);
+    }
     public void FulfillAllRules()
     {
+        foreach (OutputDomain domain in OutputDomainsList)
+        {
+            domain.ClearOutputList();
+        }
         foreach (FuzzyRule rule in RulesList)
         {
             rule.FulfillRule();
