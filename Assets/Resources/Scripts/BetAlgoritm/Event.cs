@@ -19,7 +19,6 @@ public class Event
         List<InputDomain> DomainsList = FuzzyController.ImputDomainsList;
         List<List<Possibilitie>> CurrentPossibilities = new List<List<Possibilitie>>();
         Dictionary<string, List<Possibilitie>> CombinationsDictionary = new Dictionary<string, List<Possibilitie>>();
-
         for(int i = 0; i < DomainCount; i++)
         {
             CurrentPossibilities.Add(GetPossibilities(DomainsList[i]));
