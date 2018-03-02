@@ -13,19 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
-<<<<<<< HEAD
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.8p2</UnityVersion>
     <RootNamespace></RootNamespace>
-=======
-    <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
-    <UnityVersion>2017.1.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
->>>>>>> 29e3aca... Criação do Evento iniciado
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -74,24 +66,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Compile Include="Assets\Resources\Scripts\Function.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyDomain.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzySet.cs" />
     <Compile Include="Assets\Resources\Scripts\TestScript.cs" />
-=======
-    <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Event.cs" />
-    <Compile Include="Assets\Resources\Scripts\FuzzyControler\Functions.cs" />
-    <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzyController.cs" />
-    <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzyDomains.cs" />
-    <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzyRule.cs" />
-    <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzySets.cs" />
-    <Compile Include="Assets\Resources\Scripts\TestScript.cs" />
-    <Compile Include="Assets\Resources\Scripts\FuzzyOponent.cs" />
-    <Compile Include="Assets\Resources\Scripts\PlayerBar.cs" />
-    <Compile Include="Assets\Resources\Scripts\PongBall.cs" />
-    <Compile Include="Assets\Resources\Scripts\PongBar.cs" />
->>>>>>> 29e3aca... Criação do Evento iniciado
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
