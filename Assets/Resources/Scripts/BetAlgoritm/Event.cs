@@ -6,7 +6,7 @@ using System;
 public class Event
 {
     public FuzzyController FuzzyController;
-    public List<FuzzyRule> Possibilities { get; private set; }
+    public List<Possibilitie> Possibilities { get; private set; }
 
     public Event(FuzzyController controller)
     {
@@ -15,24 +15,49 @@ public class Event
 
     public void SetPossibilitiesByCombination()
     {
-        float DomainCount = FuzzyController.ImputDomainsList.Count;
+        int DomainCount = FuzzyController.ImputDomainsList.Count, Idx = -1;
+        string Representation, output = "";
+        double TotalOfCombinations = Math.Pow(2, DomainCount);
+        InputDomain Domain;
         List<InputDomain> DomainsList = FuzzyController.ImputDomainsList;
-        List<List<Possibilitie>> CurrentPossibilities = new List<List<Possibilitie>>();
+        List<List<Possibilitie>> PossibilitiesList = new List<List<Possibilitie>>();
+        List<Possibilitie> CurrentPossibilities;
+        List<Possibilitie> FinalPossibilities = new List<Possibilitie>();
         Dictionary<string, List<Possibilitie>> CombinationsDictionary = new Dictionary<string, List<Possibilitie>>();
-        for(int i = 0; i < DomainCount; i++)
+
+        for(Binary CombinationCount = 1; (int)CombinationCount < TotalOfCombinations; CombinationCount += 1)
         {
-            CurrentPossibilities.Add(GetPossibilities(DomainsList[i]));
+            CombinationCount.Normalize(DomainCount);
+            output += ("Combination Count: " + (string)CombinationCount) + "\n"; 
+            Idx = CombinationCount.LastBitOn();
+            output += ("Idx of LastBitOn: " + Idx.ToString()) + "\n";
+            Domain = DomainsList[Idx];
+            output += ("Domain name of idx: " + Domain.Name) + "\n";
+            Representation = (string)CombinationCount;
+            output += ("Representation before change last bit: " + Representation) + "\n";
+            Representation = Representation.Remove(Idx, 1);
+            Representation = "0" + Representation;
+            output += ("Representation after change last bit: " + Representation) + "\n";
+            if (CombinationsDictionary.ContainsKey(Representation))
+            {
+                output += ("Dictionary contains key.") + "\n";
+                CurrentPossibilities = GetPossibilities(Domain, CombinationsDictionary[Representation]);
+                PossibilitiesList.Add(CurrentPossibilities);
+                CombinationsDictionary.Add((string)CombinationCount, CurrentPossibilities);
+            }
+            else
+            {
+                output += ("Dictionary dont contains key.") + "\n";
+                CurrentPossibilities = GetPossibilities(Domain);
+                PossibilitiesList.Add(CurrentPossibilities);
+                CombinationsDictionary.Add((string)CombinationCount, CurrentPossibilities);
+            }
         }
-    }
-    public int nOfCombinations(int n)
-    {
-        return 2 ^ n;
-    }
-    public int Factorial(int n)
-    {
-        if (n == 0) return 1;
-        else if (n > 0) return n * Factorial(n - 1);
-        else throw new System.ArgumentException("Erro in event: Invalid number on factorial.");
+        foreach(List<Possibilitie> ParcialList in PossibilitiesList)
+        {
+            FinalPossibilities.AddRange(ParcialList);
+        }
+        Possibilities = FinalPossibilities;
     }
 
     public List<Possibilitie> GetPossibilities(InputDomain domain)
@@ -70,11 +95,24 @@ public class Possibilitie
     {
         ParametersList = new List<RuleParameter> { new RuleParameter(set1), new RuleParameter(set2) };
     }
-
     public Possibilitie(InputSet set, Possibilitie possibilitie)
     {
         ParametersList = new List<RuleParameter> { new RuleParameter(set) };
         ParametersList.AddRange(possibilitie.ParametersList);
+    }
+    public string str()
+    {
+        string Out = "[";
+        foreach(RuleParameter parameter in ParametersList)
+        {
+            Out += parameter.Set.Name + ", ";
+        }
+        Out += "]";
+        return Out;
+    }
+    public FuzzyRule MakeRule(string operation, OutputSet output)
+    {
+        return new FuzzyRule(ParametersList, operation, output);
     }
 }
 
@@ -124,9 +162,27 @@ public class Binary
     {
         return new Binary(a.Value - b);
     }
-
     public static Binary operator -(Binary a, Binary b)
     {
         return new Binary(a.Value - b.Value);
+    }
+
+    public void Normalize(int nOfBits)
+    {
+        string emptyspace = "";
+        if (nOfBits > Representation.Length)
+        {
+            for (int i = Representation.Length; i < nOfBits; i++)
+                emptyspace += "0";
+            Representation = Representation.Insert(0, emptyspace);
+        }
+    }
+    public int LastBitOn()
+    {
+        for(int i = 0; i < Representation.Length; i++)
+        {
+            if (Representation[i] == '1') return i;
+        }
+        return -1;
     }
 }
