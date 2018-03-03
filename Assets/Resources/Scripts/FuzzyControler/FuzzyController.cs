@@ -123,6 +123,14 @@ public class FuzzyController
     {
         RulesList.Add(rule);
     }
+    public void RemoveRule(FuzzyRule rule)
+    {
+        RulesList.Remove(rule);
+    }
+    public void ClearAllRules()
+    {
+        RulesList.Clear();
+    }
     public void FulfillAllRules()
     {
         foreach (OutputDomain domain in OutputDomainsList)

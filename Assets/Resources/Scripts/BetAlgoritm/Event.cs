@@ -5,49 +5,60 @@ using System;
 
 public class Event
 {
-    public FuzzyController FuzzyController;
+    public FuzzyController FuzzyController { get; private set; }
     public List<Possibilitie> Possibilities { get; private set; }
+    public int[] PossibilitiesWinCount { get; private set; }
 
     public Event(FuzzyController controller)
     {
         FuzzyController = controller;
     }
 
+    public string Str()
+    {
+        string Out = "Total of Possibilities: " + Possibilities.Count.ToString();
+        Out += "\nPossibilities:"+"\n";
+        foreach(Possibilitie poss in Possibilities)
+        {
+            Out += poss.str();
+        }
+        Out += "\nPossibilities Win Count:\n[";
+        for(int i = 0; i < PossibilitiesWinCount.Length; i++)
+        {
+            Out += " " + PossibilitiesWinCount[i].ToString();
+        }
+        Out += "]";
+        return Out;
+    }
     public void SetPossibilitiesByCombination()
     {
-        int DomainCount = FuzzyController.ImputDomainsList.Count, Idx = -1;
-        string Representation, output = "";
-        double TotalOfCombinations = Math.Pow(2, DomainCount);
+        int DomainCount = FuzzyController.ImputDomainsList.Count, Idx = -1, TotalOfCombinations;
+        string Representation;
         InputDomain Domain;
         List<InputDomain> DomainsList = FuzzyController.ImputDomainsList;
         List<List<Possibilitie>> PossibilitiesList = new List<List<Possibilitie>>();
         List<Possibilitie> CurrentPossibilities;
         List<Possibilitie> FinalPossibilities = new List<Possibilitie>();
         Dictionary<string, List<Possibilitie>> CombinationsDictionary = new Dictionary<string, List<Possibilitie>>();
-
-        for(Binary CombinationCount = 1; (int)CombinationCount < TotalOfCombinations; CombinationCount += 1)
+        
+        TotalOfCombinations = (int)Math.Pow(2, DomainCount) - 1;
+        InitializeCount(TotalOfCombinations);
+        for (Binary CombinationCount = 1; (int)CombinationCount <= TotalOfCombinations; CombinationCount += 1)
         {
             CombinationCount.Normalize(DomainCount);
-            output += ("Combination Count: " + (string)CombinationCount) + "\n"; 
             Idx = CombinationCount.LastBitOn();
-            output += ("Idx of LastBitOn: " + Idx.ToString()) + "\n";
             Domain = DomainsList[Idx];
-            output += ("Domain name of idx: " + Domain.Name) + "\n";
             Representation = (string)CombinationCount;
-            output += ("Representation before change last bit: " + Representation) + "\n";
             Representation = Representation.Remove(Idx, 1);
             Representation = "0" + Representation;
-            output += ("Representation after change last bit: " + Representation) + "\n";
             if (CombinationsDictionary.ContainsKey(Representation))
             {
-                output += ("Dictionary contains key.") + "\n";
                 CurrentPossibilities = GetPossibilities(Domain, CombinationsDictionary[Representation]);
                 PossibilitiesList.Add(CurrentPossibilities);
                 CombinationsDictionary.Add((string)CombinationCount, CurrentPossibilities);
             }
             else
             {
-                output += ("Dictionary dont contains key.") + "\n";
                 CurrentPossibilities = GetPossibilities(Domain);
                 PossibilitiesList.Add(CurrentPossibilities);
                 CombinationsDictionary.Add((string)CombinationCount, CurrentPossibilities);
@@ -59,7 +70,20 @@ public class Event
         }
         Possibilities = FinalPossibilities;
     }
-
+    public void InitializeCount(int size)
+    {
+        PossibilitiesWinCount = new int[size];
+        for (int i = 0; i < size; i++) PossibilitiesWinCount[i] = 0;
+    }
+    public void CountAWin(uint idx)
+    {
+        if (idx < Possibilities.Count) PossibilitiesWinCount[idx]++;
+    }
+    public FuzzyRule GetRule(int PossibilitieIdx, OutputSet outputset)
+    {
+        FuzzyRule Rule = new FuzzyRule(Possibilities[PossibilitieIdx].ParametersList, "and", outputset);
+        return Rule;
+    }
     public List<Possibilitie> GetPossibilities(InputDomain domain)
     {
         List<Possibilitie> Result = new List<Possibilitie>();
