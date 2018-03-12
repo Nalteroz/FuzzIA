@@ -11,6 +11,7 @@ public class TestScript : MonoBehaviour
     OutputDomain outdomain;
     OutputSet outset;
     FuzzyRule Rule;
+    Addiction ad = new Addiction(5);
 	// Use this for initialization
 	void Start ()
     {
@@ -26,9 +27,7 @@ public class TestScript : MonoBehaviour
         Ev = new Event(controller);
         Ev.SetPossibilitiesByCombination();
         Rule = Ev.GetRule(2, outset);
-        Debug.Log(Rule.Str());
-        Ev.CountAWin(2);
-        Debug.Log(Ev.Str());
+        Debug.Log(ad.Str());
     }
 	
 }

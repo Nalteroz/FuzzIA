@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 
 public class Event
 {
     public FuzzyController FuzzyController { get; private set; }
     public List<Possibilitie> Possibilities { get; private set; }
-    public int[] PossibilitiesWinCount { get; private set; }
+    public uint[] WinCount { get; private set; }
+
+    private uint TotalOfGames = 0;
 
     public Event(FuzzyController controller)
     {
@@ -23,9 +25,9 @@ public class Event
             Out += poss.str();
         }
         Out += "\nPossibilities Win Count:\n[";
-        for(int i = 0; i < PossibilitiesWinCount.Length; i++)
+        for(int i = 0; i < WinCount.Length; i++)
         {
-            Out += " " + PossibilitiesWinCount[i].ToString();
+            Out += " " + WinCount[i].ToString();
         }
         Out += "]";
         return Out;
@@ -72,12 +74,17 @@ public class Event
     }
     public void InitializeCount(int size)
     {
-        PossibilitiesWinCount = new int[size];
-        for (int i = 0; i < size; i++) PossibilitiesWinCount[i] = 0;
+        WinCount = new uint[size];
+        for (int i = 0; i < size; i++) WinCount[i] = 0;
     }
     public void CountAWin(uint idx)
     {
-        if (idx < Possibilities.Count) PossibilitiesWinCount[idx]++;
+        if (idx < Possibilities.Count) WinCount[idx]++;
+        TotalOfGames++;
+    }
+    public float GetProbabilitieOfWin(int idx)
+    {
+        return ((1f + WinCount[idx]) / (WinCount.Length + TotalOfGames));
     }
     public FuzzyRule GetRule(int PossibilitieIdx, OutputSet outputset)
     {
@@ -105,6 +112,7 @@ public class Event
         }
         return Result;
     }
+    
 }
 
 public class Possibilitie
@@ -208,5 +216,52 @@ public class Binary
             if (Representation[i] == '1') return i;
         }
         return -1;
+    }
+}
+
+public class RandomPickIndex
+{
+    public List<int> PickList { get; private set; }
+    private System.Random Rnd;
+
+    public RandomPickIndex(int IdxCount)
+    {
+        Rnd = new System.Random();
+        PickList = new List<int>(IdxCount);
+        for (int i = 0; i < IdxCount; i++) PickList.Add(i);
+        ShuffleList(PickList);
+    }
+
+    public void ShuffleList(List<int> list)
+    {
+        for (int idx = 0; idx < list.Count; idx++)
+        {
+            int RndIdx = Rnd.Next(list.Count);
+            while (idx == RndIdx) RndIdx = Rnd.Next(list.Count);
+            Swap(list, idx, RndIdx);
+        }
+    }
+    private void Swap(List<int> list, int a, int b)
+    {
+        int t = list[a];
+        list[a] = list[b];
+        list[b] = t;
+    }
+    public int GetNext()
+    {
+        if (PickList.Count > 0)
+        {
+            int Idx = PickList[0];
+            PickList.RemoveAt(0);
+            return Idx;
+        }
+        else return -1;
+    }
+    public string Str()
+    {
+        string Out = "[";
+        for (int i = 0; i < PickList.Count; i++) Out += PickList[i].ToString() + "; ";
+        Out += "]";
+        return Out;
     }
 }
