@@ -5,15 +5,14 @@ using UnityEngine;
 
 public class Event
 {
-    public FuzzyController FuzzyController { get; private set; }
+    public FuzzyController ControllerPointer { get; private set; }
     public List<Possibilitie> Possibilities { get; private set; }
-    public uint[] WinCount { get; private set; }
 
     private uint TotalOfGames = 0;
 
     public Event(FuzzyController controller)
     {
-        FuzzyController = controller;
+        ControllerPointer = controller;
     }
 
     public string Str()
@@ -24,27 +23,20 @@ public class Event
         {
             Out += poss.str();
         }
-        Out += "\nPossibilities Win Count:\n[";
-        for(int i = 0; i < WinCount.Length; i++)
-        {
-            Out += " " + WinCount[i].ToString();
-        }
-        Out += "]";
         return Out;
     }
     public void SetPossibilitiesByCombination()
     {
-        int DomainCount = FuzzyController.ImputDomainsList.Count, Idx = -1, TotalOfCombinations;
+        int DomainCount = ControllerPointer.ImputDomainsList.Count, Idx = -1, TotalOfCombinations;
         string Representation;
         InputDomain Domain;
-        List<InputDomain> DomainsList = FuzzyController.ImputDomainsList;
+        List<InputDomain> DomainsList = ControllerPointer.ImputDomainsList;
         List<List<Possibilitie>> PossibilitiesList = new List<List<Possibilitie>>();
         List<Possibilitie> CurrentPossibilities;
         List<Possibilitie> FinalPossibilities = new List<Possibilitie>();
         Dictionary<string, List<Possibilitie>> CombinationsDictionary = new Dictionary<string, List<Possibilitie>>();
         
         TotalOfCombinations = (int)Math.Pow(2, DomainCount) - 1;
-        InitializeCount(TotalOfCombinations);
         for (Binary CombinationCount = 1; (int)CombinationCount <= TotalOfCombinations; CombinationCount += 1)
         {
             CombinationCount.Normalize(DomainCount);
@@ -72,20 +64,7 @@ public class Event
         }
         Possibilities = FinalPossibilities;
     }
-    public void InitializeCount(int size)
-    {
-        WinCount = new uint[size];
-        for (int i = 0; i < size; i++) WinCount[i] = 0;
-    }
-    public void CountAWin(uint idx)
-    {
-        if (idx < Possibilities.Count) WinCount[idx]++;
-        TotalOfGames++;
-    }
-    public float GetProbabilitieOfWin(int idx)
-    {
-        return ((1f + WinCount[idx]) / (WinCount.Length + TotalOfGames));
-    }
+    
     public FuzzyRule GetRule(int PossibilitieIdx, OutputSet outputset)
     {
         FuzzyRule Rule = new FuzzyRule(Possibilities[PossibilitieIdx].ParametersList, "and", outputset);
@@ -119,6 +98,10 @@ public class Possibilitie
 {
     public List<RuleParameter> ParametersList { get; private set; }
 
+    public Possibilitie()
+    {
+        ParametersList = new List<RuleParameter> ();
+    }
     public Possibilitie(InputSet set)
     {
         ParametersList = new List<RuleParameter> { new RuleParameter(set) };
@@ -144,7 +127,8 @@ public class Possibilitie
     }
     public FuzzyRule MakeRule(string operation, OutputSet output)
     {
-        return new FuzzyRule(ParametersList, operation, output);
+        if (ParametersList != null) return new FuzzyRule(ParametersList, operation, output);
+        else return null;
     }
 }
 
