@@ -7,24 +7,27 @@ public class House
     public FuzzyController ControllerPointer { get; private set; }
     public List<List<Player>> Players { get; private set; }
     public List<List<OddList>> Odds { get; private set; }
+    public float MinRisk { get; private set; }
 
 
-    public House(Event Event, int nOfPlayers)
+    public House(Event Event, int nOfPlayers = 3, int MinimalRisk = 10)
     {
         EventPointer = Event;
         ControllerPointer = Event.ControllerPointer;
+        MinRisk = MinimalRisk;
         InitializePlayers(nOfPlayers);
+        InitializeOdds();
     }
 
     public void InitializePlayers(int PlayersPerDomain)
     {
         Players = new List<List<Player>>();
-        for(int DomainIdx = 0; DomainIdx < ControllerPointer.OutputDomainsList.Count; DomainIdx++)
+        for(int OutDomainIdx = 0; OutDomainIdx < ControllerPointer.OutputDomainsList.Count; OutDomainIdx++)
         {
             List<Player> PlayerList = new List<Player>();
             for (int i = 0; i < PlayersPerDomain; i++)
             {
-                PlayerList.Add(new Player(this, DomainIdx));
+                PlayerList.Add(new Player(this, ControllerPointer.OutputDomainsList[OutDomainIdx]));
             }
             Players.Add(PlayerList);
         }
@@ -49,12 +52,14 @@ public class House
 public class Bet
 {
     public Player Player { get; private set; }
-    public uint PossibilitieIdx { get; private set; }
+    public OutputSet OutSet { get; private set;}
+    public int PossibilitieIdx { get; private set; }
     public float BetValue { get; private set; }
 
-    public Bet(Player player, uint possibilitieidx, float value)
+    public Bet(Player player, OutputSet setbetted, int possibilitieidx, float value)
     {
         Player = player;
+        OutSet = setbetted;
         PossibilitieIdx = possibilitieidx;
         BetValue = value;
     }

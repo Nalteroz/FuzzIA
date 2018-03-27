@@ -9,8 +9,8 @@ public class TestScript : MonoBehaviour
     Event Ev;
     InputDomain indomain;
     OutputDomain outdomain;
+    House house;
     OutputSet outset;
-    FuzzyRule Rule;
     Addiction ad = new Addiction(5);
 	// Use this for initialization
 	void Start ()
@@ -28,8 +28,9 @@ public class TestScript : MonoBehaviour
         //indomain.AddSet("g", new float[] { 0, 0, 1 });
         Ev = new Event(controller);
         Ev.SetPossibilitiesByCombination();
-        Rule = Ev.GetRule(2, outset);
-        Debug.Log(Ev.Str());
+        //house = new House(Ev);
+
+        Debug.Log(ad.Str());
     }
 	
 }

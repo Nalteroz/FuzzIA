@@ -8,7 +8,6 @@ public class Event
     public FuzzyController ControllerPointer { get; private set; }
     public List<Possibilitie> Possibilities { get; private set; }
 
-    private uint TotalOfGames = 0;
 
     public Event(FuzzyController controller)
     {
