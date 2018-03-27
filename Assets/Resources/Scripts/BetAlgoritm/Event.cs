@@ -37,6 +37,7 @@ public class Event
         Dictionary<string, List<Possibilitie>> CombinationsDictionary = new Dictionary<string, List<Possibilitie>>();
         
         TotalOfCombinations = (int)Math.Pow(2, DomainCount) - 1;
+        FinalPossibilities.Add(new Possibilitie());
         for (Binary CombinationCount = 1; (int)CombinationCount <= TotalOfCombinations; CombinationCount += 1)
         {
             CombinationCount.Normalize(DomainCount);
