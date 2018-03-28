@@ -57,7 +57,7 @@ public class Player
     {
         float ChanceOfWin = odds.GetChanceOfWin(PossibilitieIdx), Bet = 0;
         float CurrentAddiction = Addictions[OutSetIdx].Tendings[PossibilitieIdx];
-        if (ChanceOfWin >= CurrentAddiction && !isBroken)
+        if (CurrentAddiction >= ChanceOfWin && !isBroken)
         {
             Bet = (CurrentAddiction * odds.Odds[PossibilitieIdx] - 1) / (odds.Odds[PossibilitieIdx] - 1);
             Bet = Math.Min(Bankroll, Math.Max(HousePointer.MinRisk, Bet));
@@ -84,7 +84,7 @@ public class Addiction
     public float[] Tendings { get; private set; }
     public int FavoriteIndex { get; private set; }
 
-    private Random Rnd;
+    Random Rnd;
 
     public Addiction(int NumberOfTendings)
     {
@@ -92,7 +92,7 @@ public class Addiction
         Rnd = new Random();
         RandonlyFillTendings();
     }
-    private void RandonlyFillTendings()
+    void RandonlyFillTendings()
     {
         FavoriteIndex = 0;
         for(int i = 0; i < Tendings.Length; i++)

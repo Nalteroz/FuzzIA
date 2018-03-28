@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class House
 {
@@ -18,6 +19,29 @@ public class House
         InitializePlayers(nOfPlayers);
         InitializeOdds();
     }
+
+    public string Str()
+    {
+        string Out = "Players:\n";
+        for (int i = 0; i < Players.Count; i++)
+        {
+            for (int j = 0; j < Players[i].Count; j++)
+            {
+                Out += "Player[" + i + "][" + j + "]";
+                Out += Players[i][j].Str(); 
+            }
+        }
+        Out += "Odds:\n";
+        for (int i = 0; i < Odds.Count; i++)
+        {
+            for (int j = 0; j < Odds[i].Count; j++)
+            {
+                Out += "\nOdd [" + i + "][" + j + "]" + Odds[i][j].Str();
+            }
+        }
+        return Out;
+    }
+
 
     public void InitializePlayers(int PlayersPerDomain)
     {
@@ -49,6 +73,7 @@ public class House
     }
     
 }
+
 public class Bet
 {
     public Player Player { get; private set; }

@@ -40,9 +40,8 @@ public class FuzzyRule
     private void SetIntensity()
     {
         IntensitiesDictionary.Add("verylittle", new Range(0, 0.2f));
-        IntensitiesDictionary.Add("little", new Range(0.2f, 0.4f));
-        IntensitiesDictionary.Add("rasoable", new Range(0.4f, 0.6f));
-        IntensitiesDictionary.Add("very", new Range(0.6f, 0.8f));
+        IntensitiesDictionary.Add("little", new Range(0, 0.4f));
+        IntensitiesDictionary.Add("very", new Range(0.6f, 1));
         IntensitiesDictionary.Add("verymuch", new Range(0.8f, 1));
     }
     private void SetOperations()

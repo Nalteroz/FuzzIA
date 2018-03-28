@@ -9,7 +9,7 @@ public class TestScript : MonoBehaviour
     Event Ev;
     InputDomain indomain;
     OutputDomain outdomain;
-    House house;
+    House Hou;
     OutputSet outset;
     Addiction ad = new Addiction(5);
 	// Use this for initialization
@@ -21,16 +21,16 @@ public class TestScript : MonoBehaviour
         indomain = controller.AddImputDomain("B", new Range(-1, 1));
         indomain.AddSet("b", new float[] { -1, -1, 0 });
         //indomain.AddSet("e", new float[] { 0, 0, 1 });
-        indomain = controller.AddImputDomain("C", new Range(-1, 1));
-        indomain.AddSet("c", new float[] { -1, -1, 0 });
+        //indomain = controller.AddImputDomain("C", new Range(-1, 1));
+        //indomain.AddSet("c", new float[] { -1, -1, 0 });
         outdomain = controller.AddOutputDomain("X", new Range(-1, 1));
         outset = outdomain.AddSet("x", new float[] { -1, -1, 0 });
-        //indomain.AddSet("g", new float[] { 0, 0, 1 });
+        outset = outdomain.AddSet("y", new float[] { -0.5f, 0, 0.5f });
         Ev = new Event(controller);
         Ev.SetPossibilitiesByCombination();
-        //house = new House(Ev);
+        Hou = new House(Ev);
 
-        Debug.Log(ad.Str());
+        Debug.Log(Hou.Str());
     }
 	
 }
