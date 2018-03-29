@@ -6,10 +6,10 @@ public class Player
 {
     public House HousePointer { get; private set; }
     public float Bankroll { get; private set; }
-    public List<Addiction> Addictions { get; private set; }
+    public Addiction[] Addictions { get; private set; }
     public bool isBroken { get; private set; }
 
-    private OutputDomain DomainPointer;
+    OutputDomain DomainPointer;
     
     public Player(House house, OutputDomain domain, float bankroll = 1000)
     {
@@ -17,12 +17,12 @@ public class Player
         isBroken = false;
         DomainPointer = domain;
         Bankroll = bankroll;
-        Addictions = new List<Addiction>();
+        Addictions = new Addiction[DomainPointer.Sets.Count];
         int TotalAdictionLayers = DomainPointer.Sets.Count;
         int AddictionsLeght = HousePointer.EventPointer.Possibilities.Count;
-        for (int i = 0; i < TotalAdictionLayers; i++)
+        for (int i = 0; i < Addictions.Length; i++)
         {
-            Addictions.Add(new Addiction(AddictionsLeght));
+            Addictions[i] = new Addiction(AddictionsLeght);
         }
     }
 
@@ -31,7 +31,7 @@ public class Player
         string Out = "Bankroll: " + Bankroll.ToString();
         Out += " - isBroken: " + isBroken.ToString();
         Out += "\n Addictions:\n";
-        for (int i = 0; i < Addictions.Count; i++) Out += "Index: " + i + ":"+ Addictions[i].Str();
+        for (int i = 0; i < Addictions.Length; i++) Out += "Index: " + i + ":"+ Addictions[i].Str();
         return Out;
     }
 
@@ -84,20 +84,15 @@ public class Addiction
     public float[] Tendings { get; private set; }
     public int FavoriteIndex { get; private set; }
 
-    Random Rnd;
+    static Random Rnd = new Random();
 
     public Addiction(int NumberOfTendings)
     {
         Tendings = new float[NumberOfTendings];
-        Rnd = new Random();
-        RandonlyFillTendings();
-    }
-    void RandonlyFillTendings()
-    {
         FavoriteIndex = 0;
-        for(int i = 0; i < Tendings.Length; i++)
+        for (int i = 0; i < Tendings.Length; i++)
         {
-            Tendings[i] = (float) Rnd.NextDouble();
+            Tendings[i] = (float)Rnd.NextDouble();
             if (Tendings[i] > Tendings[FavoriteIndex])
             {
                 FavoriteIndex = i;

@@ -12,6 +12,7 @@ public class Event
     public Event(FuzzyController controller)
     {
         ControllerPointer = controller;
+        SetPossibilitiesByCombination();
     }
 
     public string Str()
