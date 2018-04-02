@@ -290,7 +290,7 @@ public class RuleParameter
         string Out = "";
         Out += "Not flag: " + NotFlag.ToString() + "\n";
         if(Intensity!=null) Out += "Intensity: " + Intensity.Str() + "\n";
-        Out += "Set: " + Set.Str() + "\n";
+        Out += "Set: " + Set.Str();
         return Out;
     }
 }

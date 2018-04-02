@@ -9,6 +9,8 @@ public class House
     public List<List<Player>> Players { get; private set; }
     public List<List<OddList>> Odds { get; private set; }
     public float MinRisk { get; private set; }
+    public List<List<List<int>>> TurnRecomendations { get; private set; }
+    public List<List<List<Bet>>> TurnBets { get; private set; }
 
 
     public House(Event Event, int nOfPlayers = 3, int MinimalRisk = 10)
@@ -22,7 +24,8 @@ public class House
 
     public string Str()
     {
-        string Out = "Players:\n";
+        string Out = "N of players per domain: " + Players[0].Count;
+        Out += "Players:\n";
         for (int i = 0; i < Players.Count; i++)
         {
             for (int j = 0; j < Players[i].Count; j++)
@@ -37,6 +40,38 @@ public class House
             for (int j = 0; j < Odds[i].Count; j++)
             {
                 Out += "\nOdd [" + i + "][" + j + "]" + Odds[i][j].Str();
+            }
+        }
+        if (TurnRecomendations != null)
+        {
+            Out += "\nRecomendations:";
+            for (int i = 0; i < TurnRecomendations.Count; i++)
+            {
+                for (int j = 0; j < TurnRecomendations[i].Count; j++)
+                {
+                    Out += "\n[" + i + "][" + j + "]{ ";
+                    for (int k = 0; k < TurnRecomendations[i][j].Count; k++)
+                    {
+                        Out += TurnRecomendations[i][j][k] + ", ";
+                    }
+                    Out += "}";
+                }
+            }
+        }
+        if (TurnBets != null)
+        {
+            Out += "\nBets:";
+            for (int i = 0; i < TurnBets.Count; i++)
+            {
+                for (int j = 0; j < TurnBets[i].Count; j++)
+                {
+                    Out += "\n[" + i + "][" + j + "]{ ";
+                    for (int k = 0; k < TurnBets[i][j].Count; k++)
+                    {
+                        Out += TurnBets[i][j][k].Str();
+                    }
+                    Out += "}";
+                }
             }
         }
         return Out;
@@ -71,22 +106,66 @@ public class House
             Odds.Add(OddsList);
         }
     }
+    public void GetRecomendations()
+    {
+        TurnRecomendations = new List<List<List<int>>>();
+        int Recomentation = -1;
+        for (int DomainIndex = 0; DomainIndex < ControllerPointer.OutputDomainsList.Count; DomainIndex++)
+        {
+            List<List<int>> DomainRecomentations = new List<List<int>>();
+            for (int SetIndex = 0; SetIndex < ControllerPointer.OutputDomainsList[DomainIndex].Sets.Count; SetIndex++)
+            {
+                List<int> SetRecomendations = new List<int>();
+                foreach (Player player in Players[DomainIndex])
+                {
+                    Recomentation = player.Recomend(SetIndex);
+                    if (!SetRecomendations.Contains(Recomentation)) SetRecomendations.Add(Recomentation);
+                }
+                DomainRecomentations.Add(SetRecomendations);
+            }
+            TurnRecomendations.Add(DomainRecomentations);
+        }
+    }
+    public void GetBets()
+    {
+        TurnBets = new List<List<List<Bet>>>();
+        for (int DomainIndex = 0; DomainIndex < ControllerPointer.OutputDomainsList.Count; DomainIndex++)
+        {
+            List<List<Bet>> DomainBets = new List<List<Bet>>();
+            for (int SetIndex = 0; SetIndex < ControllerPointer.OutputDomainsList[DomainIndex].Sets.Count; SetIndex++)
+            {
+                List<Bet> SetBets = new List<Bet>();
+                foreach (Player player in Players[DomainIndex])
+                {
+                    SetBets.AddRange(player.MakeBets(TurnRecomendations[DomainIndex][SetIndex], SetIndex, Odds[DomainIndex][SetIndex]));
+                }
+                DomainBets.Add(SetBets);
+            }
+            TurnBets.Add(DomainBets);
+        }
+    }
     
 }
 
 public class Bet
 {
     public Player Player { get; private set; }
-    public OutputSet OutSet { get; private set;}
     public int PossibilitieIdx { get; private set; }
     public float BetValue { get; private set; }
 
-    public Bet(Player player, OutputSet setbetted, int possibilitieidx, float value)
+    public Bet(Player player, int possibilitieidx, float value)
     {
         Player = player;
-        OutSet = setbetted;
         PossibilitieIdx = possibilitieidx;
         BetValue = value;
+    }
+
+    public string Str()
+    {
+        string Out = "\nPlayer: " + Player.Str();
+        Out += "Possibilitie index: " + PossibilitieIdx;
+        Out += "\nBet value: " + BetValue + "\n";
+        return Out;
     }
 }
 

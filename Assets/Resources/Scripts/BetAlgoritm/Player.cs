@@ -10,8 +10,8 @@ public class Player
     public bool isBroken { get; private set; }
 
     OutputDomain DomainPointer;
-    
-    public Player(House house, OutputDomain domain, float bankroll = 1000)
+
+    public Player(House house, OutputDomain domain, float bankroll = 3000)
     {
         HousePointer = house;
         isBroken = false;
@@ -35,38 +35,37 @@ public class Player
         return Out;
     }
 
-    public List<int> Recomend()
+    public int Recomend(int setidx)
     {
-        List<int> Recomendations = new List<int>();
-        foreach (Addiction adct in Addictions)
-        {
-            Recomendations.Add(adct.FavoriteIndex);
-        }
-        return Recomendations;
+        return Addictions[setidx].FavoriteIndex;
     }
-    public List<Bet> MakeBet(int PossibilitieIdx, List<OddList> odds)
+
+    public List<Bet> MakeBets(List<int> SetRecomendations, int OutSetIdx, OddList SetOdds)
     {
         List<Bet> Bets = new List<Bet>();
-        for (int i = 0; i < DomainPointer.Sets.Count; i++)
+        Bet bet;
+        foreach (int recomendation in SetRecomendations)
         {
-            Bets.Add(MakeBet(PossibilitieIdx, i, odds[i]));
+            bet = MakeBet(recomendation, OutSetIdx, SetOdds);
+            if(bet!=null) Bets.Add(bet);
         }
         return Bets;
     }
     public Bet MakeBet(int PossibilitieIdx, int OutSetIdx, OddList odds)
     {
-        float ChanceOfWin = odds.GetChanceOfWin(PossibilitieIdx), Bet = 0;
+        float ChanceOfWin = odds.GetChanceOfWin(PossibilitieIdx), CurrentBet = 0, PercentOfBankroll = 0;
         float CurrentAddiction = Addictions[OutSetIdx].Tendings[PossibilitieIdx];
         if (CurrentAddiction >= ChanceOfWin && !isBroken)
         {
-            Bet = (CurrentAddiction * odds.Odds[PossibilitieIdx] - 1) / (odds.Odds[PossibilitieIdx] - 1);
-            Bet = Math.Min(Bankroll, Math.Max(HousePointer.MinRisk, Bet));
-            Bankroll -= Bet;
+            PercentOfBankroll = ((CurrentAddiction * odds.Odds[PossibilitieIdx] - 1) / (odds.Odds[PossibilitieIdx] - 1)); //Critério de kelly.
+            CurrentBet = Bankroll * PercentOfBankroll;
+            CurrentBet = Math.Min(Bankroll, Math.Max(HousePointer.MinRisk, CurrentBet));
+            Bankroll -= CurrentBet;
             if (Bankroll <= 0) isBroken = true;
         }
-        if (Bet > 0)
+        if (CurrentBet > 0)
         {
-            return new Bet(this, DomainPointer.Sets[OutSetIdx], PossibilitieIdx, Bet);
+            return new Bet(this, PossibilitieIdx, CurrentBet);
         }
         else return null;
     }
@@ -103,7 +102,7 @@ public class Addiction
     {
         string Out = "[";
         for (int i = 0; i < Tendings.Length; i++) Out += Tendings[i].ToString() + "; ";
-        Out += "]\nFavorite: {Index:" + FavoriteIndex.ToString() + ", Value: " + Tendings[FavoriteIndex].ToString() + "}\n";
+        Out += "]Favorite: {Index:" + FavoriteIndex.ToString() + ", Value: " + Tendings[FavoriteIndex].ToString() + "}\n";
         return Out;
     }
 }

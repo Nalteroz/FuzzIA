@@ -8,6 +8,7 @@ public class Event
     public FuzzyController ControllerPointer { get; private set; }
     public List<Possibilitie> Possibilities { get; private set; }
 
+    List<List<List<FuzzyRule>>> RecomendationRules;
 
     public Event(FuzzyController controller)
     {
@@ -22,6 +23,20 @@ public class Event
         foreach(Possibilitie poss in Possibilities)
         {
             Out += poss.str();
+        }
+        if (RecomendationRules != null)
+        {
+            Out += "\nRecomendations:\n";
+            for (int DomainIndex = 0; DomainIndex < RecomendationRules.Count; DomainIndex++)
+            {
+                for (int SetIndex = 0; SetIndex < RecomendationRules[DomainIndex].Count; SetIndex++)
+                {
+                    foreach (FuzzyRule rule in RecomendationRules[DomainIndex][SetIndex])
+                    {
+                        Out += rule.Str();
+                    }
+                }
+            }
         }
         return Out;
     }
@@ -64,6 +79,25 @@ public class Event
             FinalPossibilities.AddRange(ParcialList);
         }
         Possibilities = FinalPossibilities;
+    }
+
+    public void GetRecomendationsRules(List<List<List<int>>> Recomendations)
+    {
+        RecomendationRules = new List<List<List<FuzzyRule>>>();
+        for (int DomainIndex = 0; DomainIndex < Recomendations.Count; DomainIndex++)
+        {
+            List<List<FuzzyRule>> DomainRules = new List<List<FuzzyRule>>();
+            for (int SetIndex = 0; SetIndex < Recomendations[DomainIndex].Count; SetIndex++)
+            {
+                List<FuzzyRule> SetRules = new List<FuzzyRule>();
+                foreach (int recomendation in Recomendations[DomainIndex][SetIndex])
+                {
+                    SetRules.Add(GetRule(recomendation, ControllerPointer.OutputDomainsList[DomainIndex].Sets[SetIndex]));
+                }
+                DomainRules.Add(SetRules);
+            }
+            RecomendationRules.Add(DomainRules);
+        }
     }
     
     public FuzzyRule GetRule(int PossibilitieIdx, OutputSet outputset)

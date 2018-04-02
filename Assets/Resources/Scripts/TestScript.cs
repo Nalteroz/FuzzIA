@@ -12,7 +12,7 @@ public class TestScript : MonoBehaviour
     House Hou;
     OutputSet outset;
     Player[] P = new Player[3];
-    Addiction[] ad = new Addiction[3];
+    Bet bet;
 	// Use this for initialization
 	void Start ()
     {
@@ -29,20 +29,10 @@ public class TestScript : MonoBehaviour
         outset = outdomain.AddSet("y", new float[] { -0.5f, 0, 0.5f });
         Ev = new Event(controller);
         Hou = new House(Ev);
-        Debug.Log(Hou.Str());
-        //P[0] = new Player(Hou, outdomain);
-        //P[1] = new Player(Hou, outdomain);
-        //P[2] = new Player(Hou, outdomain);
-        //Debug.Log(P[0].Str());
-        //Debug.Log(P[1].Str());
-        //Debug.Log(P[2].Str());
-        //ad[0] = new Addiction(3);
-        //ad[1] = new Addiction(3);
-        //ad[2] = new Addiction(3);
-        //Debug.Log(ad[0].Str());
-        //Debug.Log(ad[1].Str());
-        //Debug.Log(ad[2].Str());
-
+        Hou.GetRecomendations();
+        Hou.GetBets();
+        Ev.GetRecomendationsRules(Hou.TurnRecomendations);
+        Debug.Log(Ev.Str());
 
 
 
