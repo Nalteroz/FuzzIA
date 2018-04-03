@@ -5,76 +5,124 @@ using System;
 public class Player
 {
     public House HousePointer { get; private set; }
-    public float Bankroll { get; private set; }
-    public Addiction[] Addictions { get; private set; }
+    public float[] Wallet { get; private set; }
+    public List<List<Addiction>> Addictions { get; private set; }
+    public List<List<int>> Recomendation { get; private set; }
     public bool isBroken { get; private set; }
 
-    OutputDomain DomainPointer;
+    bool[] EmptyPockets;
 
-    public Player(House house, OutputDomain domain, float bankroll = 3000)
+    public Player(House house, float walletbankroll = 2000)
     {
         HousePointer = house;
         isBroken = false;
-        DomainPointer = domain;
-        Bankroll = bankroll;
-        Addictions = new Addiction[DomainPointer.Sets.Count];
-        int TotalAdictionLayers = DomainPointer.Sets.Count;
-        int AddictionsLeght = HousePointer.EventPointer.Possibilities.Count;
-        for (int i = 0; i < Addictions.Length; i++)
+        Wallet = new float[house.ControllerPointer.OutputDomainsList.Count];
+        EmptyPockets = new bool[Wallet.Length];
+        for (int i = 0; i < Wallet.Length; i++)
         {
-            Addictions[i] = new Addiction(AddictionsLeght);
+            Wallet[i] = walletbankroll;
+            EmptyPockets[i] = false;
         }
+        Addictions = new List<List<Addiction>>();
+        for (int DomIdx = 0; DomIdx < house.ControllerPointer.OutputDomainsList.Count; DomIdx++)
+        {
+            List<Addiction> DomainList = new List<Addiction>();
+            for (int SetIdx = 0; SetIdx < house.ControllerPointer.OutputDomainsList[DomIdx].Sets.Count; SetIdx++)
+            {
+                DomainList.Add(new Addiction(house.EventPointer.Possibilities.Count));
+            }
+            Addictions.Add(DomainList);
+        }
+        SetRecomendation();
     }
 
     public string Str()
     {
-        string Out = "Bankroll: " + Bankroll.ToString();
-        Out += " - isBroken: " + isBroken.ToString();
-        Out += "\n Addictions:\n";
-        for (int i = 0; i < Addictions.Length; i++) Out += "Index: " + i + ":"+ Addictions[i].Str();
+        string Out = "Wallet: [" ;
+        for (int i = 0; i < Wallet.Length; i++)
+        {
+            Out += Wallet[i] + " ";
+        }
+        Out += "]\nIsBroken: " + isBroken.ToString();
+        Out += "\nAddictions:\n";
+        for (int i = 0; i < Addictions.Count; i++)
+        {
+            for (int j = 0; j < Addictions[i].Count; j++)
+            { 
+                Out += "Adiction ["+ i + " "+ j + "]{" + Addictions[i][j].Str() + "}\n";
+            }
+        }
         return Out;
     }
 
-    public int Recomend(int setidx)
+    void SetRecomendation()
     {
-        return Addictions[setidx].FavoriteIndex;
+        Recomendation = new List<List<int>>();
+        for (int DomIdx = 0; DomIdx < Addictions.Count; DomIdx++)
+        {
+            List<int> DomainList = new List<int>();
+            for (int SetIdx = 0; SetIdx < Addictions[DomIdx].Count; SetIdx++)
+            {
+                DomainList.Add(Addictions[DomIdx][SetIdx].FavoriteIndex);
+            }
+            Recomendation.Add(DomainList);
+        }
     }
 
-    public List<Bet> MakeBets(List<int> SetRecomendations, int OutSetIdx, OddList SetOdds)
+    public List<Bet> MakeBet()
     {
         List<Bet> Bets = new List<Bet>();
         Bet bet;
-        foreach (int recomendation in SetRecomendations)
+        for (int i = 0; i < HousePointer.TurnRecomendations.Count; i++)
         {
-            bet = MakeBet(recomendation, OutSetIdx, SetOdds);
-            if(bet!=null) Bets.Add(bet);
+            bet = CalculeRecomentationBet(i);
+            if(bet != null) Bets.Add(bet);
         }
         return Bets;
     }
-    public Bet MakeBet(int PossibilitieIdx, int OutSetIdx, OddList odds)
+    public Bet CalculeRecomentationBet(int recomendationIdx)
+    {
+        float BetValue = 0;
+        for (int DomainIdx = 0; DomainIdx < Addictions.Count; DomainIdx++)
+        {
+            for (int SetIdx = 0; SetIdx < Addictions[DomainIdx].Count; SetIdx++)
+            {
+                BetValue += CalculeBetValue(DomainIdx, SetIdx, HousePointer.TurnRecomendations[recomendationIdx][DomainIdx][SetIdx], HousePointer.Odds[DomainIdx][SetIdx]);
+            }
+        }
+
+        if (BetValue > 0) return new Bet(this, recomendationIdx, BetValue);
+        else return null;
+    }
+    float CalculeBetValue(int DomainIdx, int SetIdx, int PossibilitieIdx, OddList odds)
     {
         float ChanceOfWin = odds.GetChanceOfWin(PossibilitieIdx), CurrentBet = 0, PercentOfBankroll = 0;
-        float CurrentAddiction = Addictions[OutSetIdx].Tendings[PossibilitieIdx];
-        if (CurrentAddiction >= ChanceOfWin && !isBroken)
+        float CurrentAddiction = Addictions[DomainIdx][SetIdx].Tendings[PossibilitieIdx];
+        if (CurrentAddiction >= ChanceOfWin && !EmptyPockets[DomainIdx])
         {
             PercentOfBankroll = ((CurrentAddiction * odds.Odds[PossibilitieIdx] - 1) / (odds.Odds[PossibilitieIdx] - 1)); //Critério de kelly.
-            CurrentBet = Bankroll * PercentOfBankroll;
-            CurrentBet = Math.Min(Bankroll, Math.Max(HousePointer.MinRisk, CurrentBet));
-            Bankroll -= CurrentBet;
-            if (Bankroll <= 0) isBroken = true;
+            CurrentBet = Wallet[DomainIdx] * PercentOfBankroll;
+            CurrentBet = Math.Min(Wallet[DomainIdx], Math.Max(HousePointer.MinRisk, CurrentBet));
+            Wallet[DomainIdx] -= CurrentBet;
+            if (Wallet[DomainIdx] <= 0) EmptyPockets[DomainIdx] = true;
+            isBroken = CheckIfBroken();
         }
-        if (CurrentBet > 0)
+        return CurrentBet;
+    }
+
+    bool CheckIfBroken()
+    {
+        for (int i = 0; i < EmptyPockets.Length; i++)
         {
-            return new Bet(this, PossibilitieIdx, CurrentBet);
+            if (!EmptyPockets[i]) return false;
         }
-        else return null;
+        return true;
     }
 
     public Player NewPlayer()
     {
-        return new Player(HousePointer, DomainPointer);
+        return new Player(HousePointer);
     }
-
 	
 }
 

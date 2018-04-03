@@ -6,11 +6,11 @@ public class House
 {
     public Event EventPointer { get; private set; }
     public FuzzyController ControllerPointer { get; private set; }
-    public List<List<Player>> Players { get; private set; }
+    public List<Player> Players { get; private set; }
     public List<List<OddList>> Odds { get; private set; }
     public float MinRisk { get; private set; }
     public List<List<List<int>>> TurnRecomendations { get; private set; }
-    public List<List<List<Bet>>> TurnBets { get; private set; }
+    public List<Bet> TurnBets { get; private set; }
 
 
     public House(Event Event, int nOfPlayers = 3, int MinimalRisk = 10)
@@ -24,15 +24,11 @@ public class House
 
     public string Str()
     {
-        string Out = "N of players per domain: " + Players[0].Count;
+        string Out = "N of players: " + Players.Count;
         Out += "Players:\n";
         for (int i = 0; i < Players.Count; i++)
         {
-            for (int j = 0; j < Players[i].Count; j++)
-            {
-                Out += "Player[" + i + "][" + j + "]";
-                Out += Players[i][j].Str(); 
-            }
+            Out += "Player " + i +": " + Players[i].Str();   
         }
         Out += "Odds:\n";
         for (int i = 0; i < Odds.Count; i++)
@@ -47,15 +43,17 @@ public class House
             Out += "\nRecomendations:";
             for (int i = 0; i < TurnRecomendations.Count; i++)
             {
+                Out += "\nRec [" + i + "]{ ";
                 for (int j = 0; j < TurnRecomendations[i].Count; j++)
                 {
-                    Out += "\n[" + i + "][" + j + "]{ ";
+                    Out += "[";
                     for (int k = 0; k < TurnRecomendations[i][j].Count; k++)
                     {
                         Out += TurnRecomendations[i][j][k] + ", ";
                     }
-                    Out += "}";
+                    Out += "]";
                 }
+                Out += "}\n";
             }
         }
         if (TurnBets != null)
@@ -63,32 +61,19 @@ public class House
             Out += "\nBets:";
             for (int i = 0; i < TurnBets.Count; i++)
             {
-                for (int j = 0; j < TurnBets[i].Count; j++)
-                {
-                    Out += "\n[" + i + "][" + j + "]{ ";
-                    for (int k = 0; k < TurnBets[i][j].Count; k++)
-                    {
-                        Out += TurnBets[i][j][k].Str();
-                    }
-                    Out += "}";
-                }
+                Out += TurnBets[i].Str();
             }
         }
         return Out;
     }
 
 
-    public void InitializePlayers(int PlayersPerDomain)
+    public void InitializePlayers(int nOfPlayers)
     {
-        Players = new List<List<Player>>();
-        for(int OutDomainIdx = 0; OutDomainIdx < ControllerPointer.OutputDomainsList.Count; OutDomainIdx++)
+        Players = new List<Player>();
+        for (int i = 0; i < nOfPlayers; i++)
         {
-            List<Player> PlayerList = new List<Player>();
-            for (int i = 0; i < PlayersPerDomain; i++)
-            {
-                PlayerList.Add(new Player(this, ControllerPointer.OutputDomainsList[OutDomainIdx]));
-            }
-            Players.Add(PlayerList);
+            Players.Add(new Player(this));
         }
     }
     public void InitializeOdds()
@@ -109,39 +94,17 @@ public class House
     public void GetRecomendations()
     {
         TurnRecomendations = new List<List<List<int>>>();
-        int Recomentation = -1;
-        for (int DomainIndex = 0; DomainIndex < ControllerPointer.OutputDomainsList.Count; DomainIndex++)
+        foreach (Player player in Players)
         {
-            List<List<int>> DomainRecomentations = new List<List<int>>();
-            for (int SetIndex = 0; SetIndex < ControllerPointer.OutputDomainsList[DomainIndex].Sets.Count; SetIndex++)
-            {
-                List<int> SetRecomendations = new List<int>();
-                foreach (Player player in Players[DomainIndex])
-                {
-                    Recomentation = player.Recomend(SetIndex);
-                    if (!SetRecomendations.Contains(Recomentation)) SetRecomendations.Add(Recomentation);
-                }
-                DomainRecomentations.Add(SetRecomendations);
-            }
-            TurnRecomendations.Add(DomainRecomentations);
+            TurnRecomendations.Add(player.Recomendation);
         }
     }
     public void GetBets()
     {
-        TurnBets = new List<List<List<Bet>>>();
-        for (int DomainIndex = 0; DomainIndex < ControllerPointer.OutputDomainsList.Count; DomainIndex++)
+        TurnBets = new List<Bet>();
+        for (int i = 0; i < Players.Count; i++)
         {
-            List<List<Bet>> DomainBets = new List<List<Bet>>();
-            for (int SetIndex = 0; SetIndex < ControllerPointer.OutputDomainsList[DomainIndex].Sets.Count; SetIndex++)
-            {
-                List<Bet> SetBets = new List<Bet>();
-                foreach (Player player in Players[DomainIndex])
-                {
-                    SetBets.AddRange(player.MakeBets(TurnRecomendations[DomainIndex][SetIndex], SetIndex, Odds[DomainIndex][SetIndex]));
-                }
-                DomainBets.Add(SetBets);
-            }
-            TurnBets.Add(DomainBets);
+            TurnBets.AddRange(Players[i].MakeBet());
         }
     }
     
@@ -150,20 +113,20 @@ public class House
 public class Bet
 {
     public Player Player { get; private set; }
-    public int PossibilitieIdx { get; private set; }
+    public int RecomentationIdx { get; private set; }
     public float BetValue { get; private set; }
 
-    public Bet(Player player, int possibilitieidx, float value)
+    public Bet(Player player, int recomentationidx, float value)
     {
         Player = player;
-        PossibilitieIdx = possibilitieidx;
+        RecomentationIdx = recomentationidx;
         BetValue = value;
     }
 
     public string Str()
     {
         string Out = "\nPlayer: " + Player.Str();
-        Out += "Possibilitie index: " + PossibilitieIdx;
+        Out += "Recomentation index: " + RecomentationIdx;
         Out += "\nBet value: " + BetValue + "\n";
         return Out;
     }
