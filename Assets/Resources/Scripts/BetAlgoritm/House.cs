@@ -25,7 +25,7 @@ public class House
     public string Str()
     {
         string Out = "N of players: " + Players.Count;
-        Out += "Players:\n";
+        Out += "\nPlayers:\n";
         for (int i = 0; i < Players.Count; i++)
         {
             Out += "Player " + i +": " + Players[i].Str();   

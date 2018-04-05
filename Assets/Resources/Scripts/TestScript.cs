@@ -31,7 +31,9 @@ public class TestScript : MonoBehaviour
         Hou = new House(Ev);
         Hou.GetRecomendations();
         Hou.GetBets();
+        Ev.GetRecomendationsRules(Hou.TurnRecomendations);
         Debug.Log(Hou.Str());
+        Debug.Log(Ev.Str());
 
 
 

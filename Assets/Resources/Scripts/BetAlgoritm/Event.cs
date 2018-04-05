@@ -8,7 +8,7 @@ public class Event
     public FuzzyController ControllerPointer { get; private set; }
     public List<Possibilitie> Possibilities { get; private set; }
 
-    List<List<List<FuzzyRule>>> RecomendationRules;
+    List<List<FuzzyRule>> RecomendationRules;
 
     public Event(FuzzyController controller)
     {
@@ -26,15 +26,13 @@ public class Event
         }
         if (RecomendationRules != null)
         {
-            Out += "\nRecomendations:\n";
-            for (int DomainIndex = 0; DomainIndex < RecomendationRules.Count; DomainIndex++)
+            Out += "\nRecomendations rules:\n";
+            for (int PlayerRecIdx = 0; PlayerRecIdx < RecomendationRules.Count; PlayerRecIdx++)
             {
-                for (int SetIndex = 0; SetIndex < RecomendationRules[DomainIndex].Count; SetIndex++)
+                Out += "Player " + PlayerRecIdx + ":\n";
+                for (int RuleIdx = 0; RuleIdx < RecomendationRules[PlayerRecIdx].Count; RuleIdx++)
                 {
-                    foreach (FuzzyRule rule in RecomendationRules[DomainIndex][SetIndex])
-                    {
-                        Out += rule.Str();
-                    }
+                    Out += RecomendationRules[PlayerRecIdx][RuleIdx].Str();
                 }
             }
         }
@@ -83,23 +81,20 @@ public class Event
 
     public void GetRecomendationsRules(List<List<List<int>>> Recomendations)
     {
-        RecomendationRules = new List<List<List<FuzzyRule>>>();
-        for (int DomainIndex = 0; DomainIndex < Recomendations.Count; DomainIndex++)
+        RecomendationRules = new List<List<FuzzyRule>>();
+        for (int PlayerRecIdx = 0; PlayerRecIdx < Recomendations.Count; PlayerRecIdx++)
         {
-            List<List<FuzzyRule>> DomainRules = new List<List<FuzzyRule>>();
-            for (int SetIndex = 0; SetIndex < Recomendations[DomainIndex].Count; SetIndex++)
+            List<FuzzyRule> PlayerRules = new List<FuzzyRule>();
+            for (int DomainIdx = 0; DomainIdx < Recomendations[PlayerRecIdx].Count; DomainIdx++)
             {
-                List<FuzzyRule> SetRules = new List<FuzzyRule>();
-                foreach (int recomendation in Recomendations[DomainIndex][SetIndex])
+                for (int SetIdx = 0; SetIdx <  Recomendations[PlayerRecIdx][DomainIdx].Count; SetIdx++)
                 {
-                    SetRules.Add(GetRule(recomendation, ControllerPointer.OutputDomainsList[DomainIndex].Sets[SetIndex]));
+                    PlayerRules.Add(GetRule(Recomendations[PlayerRecIdx][DomainIdx][SetIdx], ControllerPointer.OutputDomainsList[DomainIdx].Sets[SetIdx]));
                 }
-                DomainRules.Add(SetRules);
             }
-            RecomendationRules.Add(DomainRules);
+            RecomendationRules.Add(PlayerRules);
         }
     }
-    
     public FuzzyRule GetRule(int PossibilitieIdx, OutputSet outputset)
     {
         FuzzyRule Rule = new FuzzyRule(Possibilities[PossibilitieIdx].ParametersList, "and", outputset);

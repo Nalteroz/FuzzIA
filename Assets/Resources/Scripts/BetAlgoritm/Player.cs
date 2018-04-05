@@ -12,7 +12,7 @@ public class Player
 
     bool[] EmptyPockets;
 
-    public Player(House house, float walletbankroll = 2000)
+    public Player(House house, float walletbankroll = 1500)
     {
         HousePointer = house;
         isBroken = false;
