@@ -83,15 +83,18 @@ public class Player
     public Bet CalculeRecomentationBet(int recomendationIdx)
     {
         float BetValue = 0;
+        float[][] IndividualValues = new float[Addictions.Count][];
         for (int DomainIdx = 0; DomainIdx < Addictions.Count; DomainIdx++)
         {
+            IndividualValues[DomainIdx] = new float[Addictions[DomainIdx].Count];
             for (int SetIdx = 0; SetIdx < Addictions[DomainIdx].Count; SetIdx++)
             {
-                BetValue += CalculeBetValue(DomainIdx, SetIdx, HousePointer.TurnRecomendations[recomendationIdx][DomainIdx][SetIdx], HousePointer.Odds[DomainIdx][SetIdx]);
+                IndividualValues[DomainIdx][SetIdx] = CalculeBetValue(DomainIdx, SetIdx, HousePointer.TurnRecomendations[recomendationIdx][DomainIdx][SetIdx], HousePointer.Odds[DomainIdx][SetIdx]);
+                BetValue += IndividualValues[DomainIdx][SetIdx];
             }
         }
 
-        if (BetValue > 0) return new Bet(this, recomendationIdx, BetValue);
+        if (BetValue > 0) return new Bet(this, recomendationIdx, BetValue, IndividualValues);
         else return null;
     }
     float CalculeBetValue(int DomainIdx, int SetIdx, int PossibilitieIdx, OddList odds)

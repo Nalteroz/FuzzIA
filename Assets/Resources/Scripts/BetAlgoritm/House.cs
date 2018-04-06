@@ -114,20 +114,32 @@ public class Bet
 {
     public Player Player { get; private set; }
     public int RecomentationIdx { get; private set; }
-    public float BetValue { get; private set; }
+    public float TotalValue { get; private set; }
+    public float[][] IndividualValues;
 
-    public Bet(Player player, int recomentationidx, float value)
+    public Bet(Player player, int recomentationidx, float totalvalue, float[][] values)
     {
         Player = player;
         RecomentationIdx = recomentationidx;
-        BetValue = value;
+        TotalValue = totalvalue;
+        IndividualValues = values;
     }
 
     public string Str()
     {
         string Out = "\nPlayer: " + Player.Str();
         Out += "Recomentation index: " + RecomentationIdx;
-        Out += "\nBet value: " + BetValue + "\n";
+        Out += "\nBet value: " + TotalValue + "\n";
+        Out += "\nIndividual values:\n";
+        foreach(float[] domain in IndividualValues)
+        {
+            Out += "[";
+            foreach (float setvalue in domain)
+            {
+                Out += setvalue + ", ";
+            }
+            Out += "]\n";
+        }
         return Out;
     }
 }

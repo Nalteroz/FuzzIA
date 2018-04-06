@@ -31,7 +31,10 @@ public class FuzzyRule
     {
         string Out = "";
         Out += "Conditions:\n";
-        foreach (RuleParameter condition in ConditionsList) Out += condition.Str();
+        foreach (RuleParameter condition in ConditionsList)
+        {
+            Out += condition.Str();
+        }
         Out += "Operation: " + RuleOperation + "\n";
         Out += "Output:\n";
         Out += OutputSet.Str();
@@ -225,30 +228,34 @@ public class FuzzyRule
     }
     public void FulfillRule()
     {
-        float Result = ConditionsList[0].IsTrue(), CurrentValue;
-        if(RuleOperation == "and")
+        float Result = 0, CurrentValue;
+        if (ConditionsList.Count > 0)
         {
-            for(int index = 1; index < ConditionsList.Count; index++)
+            Result = ConditionsList[0].IsTrue();
+            if (RuleOperation == "and")
             {
-                CurrentValue = ConditionsList[index].IsTrue();
-                if(CurrentValue < Result)
+                for (int index = 1; index < ConditionsList.Count; index++)
                 {
-                    Result = CurrentValue;
+                    CurrentValue = ConditionsList[index].IsTrue();
+                    if (CurrentValue < Result)
+                    {
+                        Result = CurrentValue;
+                    }
                 }
             }
-        }
-        else if(RuleOperation == "or")
-        {
-            for (int index = 1; index < ConditionsList.Count; index++)
+            else if (RuleOperation == "or")
             {
-                CurrentValue = ConditionsList[index].IsTrue();
-                if (CurrentValue > Result)
+                for (int index = 1; index < ConditionsList.Count; index++)
                 {
-                    Result = CurrentValue;
+                    CurrentValue = ConditionsList[index].IsTrue();
+                    if (CurrentValue > Result)
+                    {
+                        Result = CurrentValue;
+                    }
                 }
             }
+            OutputSet.AddValue(Result);
         }
-        OutputSet.AddValue(Result);
     }
     
 }

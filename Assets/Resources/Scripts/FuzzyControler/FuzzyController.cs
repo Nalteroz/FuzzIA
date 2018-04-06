@@ -123,6 +123,10 @@ public class FuzzyController
     {
         RulesList.Add(rule);
     }
+    public void AddRule(List<FuzzyRule> rules)
+    {
+        RulesList = rules;
+    }
     public void RemoveRule(FuzzyRule rule)
     {
         RulesList.Remove(rule);

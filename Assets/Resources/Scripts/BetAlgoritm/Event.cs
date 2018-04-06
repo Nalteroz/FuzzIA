@@ -8,7 +8,7 @@ public class Event
     public FuzzyController ControllerPointer { get; private set; }
     public List<Possibilitie> Possibilities { get; private set; }
 
-    List<List<FuzzyRule>> RecomendationRules;
+    public List<List<FuzzyRule>> RecomendationRules { get; private set; }
 
     public Event(FuzzyController controller)
     {
@@ -22,7 +22,7 @@ public class Event
         Out += "\nPossibilities:"+"\n";
         foreach(Possibilitie poss in Possibilities)
         {
-            Out += poss.str();
+            Out += poss.Str();
         }
         if (RecomendationRules != null)
         {
@@ -79,17 +79,18 @@ public class Event
         Possibilities = FinalPossibilities;
     }
 
-    public void GetRecomendationsRules(List<List<List<int>>> Recomendations)
+    public void GetRecomendationsRules(House house)
     {
         RecomendationRules = new List<List<FuzzyRule>>();
-        for (int PlayerRecIdx = 0; PlayerRecIdx < Recomendations.Count; PlayerRecIdx++)
+        for (int PlayerRecIdx = 0; PlayerRecIdx < house.TurnRecomendations.Count; PlayerRecIdx++)
         {
             List<FuzzyRule> PlayerRules = new List<FuzzyRule>();
-            for (int DomainIdx = 0; DomainIdx < Recomendations[PlayerRecIdx].Count; DomainIdx++)
+            for (int DomainIdx = 0; DomainIdx < house.TurnRecomendations[PlayerRecIdx].Count; DomainIdx++)
             {
-                for (int SetIdx = 0; SetIdx <  Recomendations[PlayerRecIdx][DomainIdx].Count; SetIdx++)
+                for (int SetIdx = 0; SetIdx < house.TurnRecomendations[PlayerRecIdx][DomainIdx].Count; SetIdx++)
                 {
-                    PlayerRules.Add(GetRule(Recomendations[PlayerRecIdx][DomainIdx][SetIdx], ControllerPointer.OutputDomainsList[DomainIdx].Sets[SetIdx]));
+                    FuzzyRule Rule = GetRule(house.TurnRecomendations[PlayerRecIdx][DomainIdx][SetIdx], ControllerPointer.OutputDomainsList[DomainIdx].Sets[SetIdx]);
+                    PlayerRules.Add(Rule);
                 }
             }
             RecomendationRules.Add(PlayerRules);
@@ -97,7 +98,7 @@ public class Event
     }
     public FuzzyRule GetRule(int PossibilitieIdx, OutputSet outputset)
     {
-        FuzzyRule Rule = new FuzzyRule(Possibilities[PossibilitieIdx].ParametersList, "and", outputset);
+        FuzzyRule Rule = Possibilities[PossibilitieIdx].MakeRule("and", outputset);
         return Rule;
     }
     public List<Possibilitie> GetPossibilities(InputDomain domain)
@@ -121,7 +122,6 @@ public class Event
         }
         return Result;
     }
-    
 }
 
 public class Possibilitie
@@ -145,7 +145,7 @@ public class Possibilitie
         ParametersList = new List<RuleParameter> { new RuleParameter(set) };
         ParametersList.AddRange(possibilitie.ParametersList);
     }
-    public string str()
+    public string Str()
     {
         string Out = "[";
         foreach(RuleParameter parameter in ParametersList)
@@ -157,8 +157,7 @@ public class Possibilitie
     }
     public FuzzyRule MakeRule(string operation, OutputSet output)
     {
-        if (ParametersList != null) return new FuzzyRule(ParametersList, operation, output);
-        else return null;
+        return new FuzzyRule(ParametersList, operation, output);
     }
 }
 
