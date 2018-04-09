@@ -148,7 +148,7 @@ public class FuzzySet
             h = IsInDomain();
             if (h == 1)
             {
-                CenterX = SetRange.Begin + (SetRange.End - SetRange.Begin) / 2;
+                CenterX = GetMiddlePoint();
                 if (Type == Types.Triangle)
                 {
                     x1 = SetRange.End - SetRange.Begin;
@@ -165,7 +165,7 @@ public class FuzzySet
             }
             else
             {
-                CenterX = SetRange.Begin + (SetRange.End - SetRange.Begin)/2;
+                CenterX = GetMiddlePoint();
                 x1 = Functions[0].CalculeX(h);
                 x2 = Functions[1].CalculeX(h);
                 TotalArea = ( (x1 - SetRange.Begin) * h ) / 2 + (x2 - x1) * h + ( (SetRange.End - x2) * h ) / 2;
@@ -175,9 +175,24 @@ public class FuzzySet
         }
         else
         {
-            CenterOfArea = new CenterOfArea((SetRange.End - SetRange.Begin), 0);
+            CenterOfArea = new CenterOfArea(GetMiddlePoint(), 0);
             return CenterOfArea;
         }
+    }
+    public float GetMiddlePoint()
+    {
+        float Middle;
+        if (Type == Types.Triangle)
+        {
+            Middle = VerticesPoints[1].x;
+            return Middle;
+        }
+        else if (Type == Types.Trapezium)
+        {
+            Middle = (VerticesPoints[1].x / 2 + VerticesPoints[2].x / 2);
+            return Middle;
+        }
+        throw new System.FormatException("Erro in GetMiddlePoint: Incorrect type.");
     }
 }
 

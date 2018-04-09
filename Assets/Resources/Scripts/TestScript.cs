@@ -15,19 +15,19 @@ public class TestScript : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        indomain1 = controller.AddImputDomain("A", new Range(-1, 1));
-        indomain1.AddSet("a", new float[] { -1, -1, 0});
-        indomain1.AddSet("b", new float[] { 0, 1, 1 });
-        indomain1.SetX(-0.5f);
-        indomain2 = controller.AddImputDomain("B", new Range(-1, 1));
-        indomain2.AddSet("c", new float[] { -1, -1, 0 });
-        indomain2.AddSet("d", new float[] { 0, 1, 1 });
-        indomain2.SetX(1f);
+        indomain1 = controller.AddImputDomain("p1", new Range(-1, 1));
+        indomain1.AddSet("errado1", new float[] { -1, -1, 0});
+        indomain1.AddSet("certo1", new float[] { 0, 1, 1 });
+        indomain1.SetX(1f);
+        indomain1 = controller.AddImputDomain("p2", new Range(-1, 1));
+        indomain1.AddSet("errado2", new float[] { -1, -1, 0 });
+        indomain1.AddSet("certo2  ", new float[] { 0, 1, 1 });
+        indomain1.SetX(1f);
         //indomain = controller.AddImputDomain("C", new Range(-1, 1));
         //indomain.AddSet("c", new float[] { -1, -1, 0 });
-        outdomain = controller.AddOutputDomain("X", new Range(-1, 1));
-        outset = outdomain.AddSet("x", new float[] { -1, -1, 0 });
-        outset = outdomain.AddSet("y", new float[] { -0.5f, 0, 0.5f });
+        outdomain = controller.AddOutputDomain("R", new Range(-1, 1));
+        outset = outdomain.AddSet("certo", new float[] { 0, 1, 1 });
+        outset = outdomain.AddSet("errado", new float[] { -1, -1, 0 });
         Ev = new Event(controller);
         Hou = new House(Ev);
         Hou.GetRecomendations();
@@ -39,6 +39,7 @@ public class TestScript : MonoBehaviour
         Handler.StepEvaluation();
         Debug.Log(Handler.Str());
         Debug.Log(Handler.EvaluationComplete);
+        Debug.Log(Handler.GetWinnerIdx());
 
 
     }
@@ -46,6 +47,7 @@ public class TestScript : MonoBehaviour
     float Avaliation()
     {
         controller.FulfillAllRules();
+        Debug.Log(outdomain.Str());
         return outdomain.Defuzzyfication();
     }
 	

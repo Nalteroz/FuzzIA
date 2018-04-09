@@ -142,6 +142,18 @@ public class OutputDomain : FuzzyDomain
         OutputList = new List<FuzzyValue>();
     }
 
+    public string Str()
+    {
+        string Out = "";
+        Out += "Domain name: " + Name + "\n";
+        Out += "Range: " + DomainRange.Str() + "\n";
+        Out += "FuzzySets: " + "\n";
+        foreach (OutputSet set in Sets) Out += set.Str();
+        Out += "Current output: " + "\n";
+        foreach (FuzzyValue value in OutputList) Out += value.Str();
+        return Out;
+    }
+
     public void SetRange(Range range)
     {
         float Smaller = float.PositiveInfinity, Biggest = float.NegativeInfinity;

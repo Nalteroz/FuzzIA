@@ -90,7 +90,7 @@ public class Event
                 for (int SetIdx = 0; SetIdx < house.TurnRecomendations[PlayerRecIdx][DomainIdx].Count; SetIdx++)
                 {
                     FuzzyRule Rule = GetRule(house.TurnRecomendations[PlayerRecIdx][DomainIdx][SetIdx], ControllerPointer.OutputDomainsList[DomainIdx].Sets[SetIdx]);
-                    PlayerRules.Add(Rule);
+                    if(Rule!=null) PlayerRules.Add(Rule);
                 }
             }
             RecomendationRules.Add(PlayerRules);
@@ -157,7 +157,8 @@ public class Possibilitie
     }
     public FuzzyRule MakeRule(string operation, OutputSet output)
     {
-        return new FuzzyRule(ParametersList, operation, output);
+        if (ParametersList != null) return new FuzzyRule(ParametersList, operation, output);
+        else return null;
     }
 }
 

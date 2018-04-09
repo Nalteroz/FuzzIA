@@ -13,14 +13,12 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectGenerator>VSTU</UnityProjectGenerator>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.4.0f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -237,10 +235,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Resources\Scripts\BetAlgoritm\EvaluationHandler.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Event.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\House.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Player.cs" />
-    <Compile Include="Assets\Resources\Scripts\BetAlgoritm\EvaluationHandler.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\Functions.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzyController.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzyDomains.cs" />
