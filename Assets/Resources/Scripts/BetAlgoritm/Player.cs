@@ -80,6 +80,19 @@ public class Player
         }
         return Bets;
     }
+    public void RecievePayment(float montant)
+    {
+        float Part = montant / Wallet.Length;
+        for(int pocketidx = 0; pocketidx < Wallet.Length; pocketidx++)
+        {
+            Wallet[pocketidx] =  Part;
+            if (Wallet[pocketidx] > 0)
+            {
+                EmptyPockets[pocketidx] = false;
+                isBroken = false;
+            }
+        }
+    }
     public Bet CalculeRecomentationBet(int recomendationIdx)
     {
         float BetValue = 0;

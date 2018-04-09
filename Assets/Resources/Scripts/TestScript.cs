@@ -33,13 +33,11 @@ public class TestScript : MonoBehaviour
         Hou.GetRecomendations();
         Hou.GetBets();
         Ev.GetRecomendationsRules(Hou);
-        Debug.Log(Ev.Str());
-        Debug.Log(Hou.Str());
         Handler = new EvaluationHandler(Ev, Avaliation);
         Handler.StepEvaluation();
-        Debug.Log(Handler.Str());
-        Debug.Log(Handler.EvaluationComplete);
-        Debug.Log(Handler.GetWinnerIdx());
+        Hou.PayOdds(Handler);
+        Debug.Log(Hou.Str());
+
 
 
     }
@@ -47,7 +45,6 @@ public class TestScript : MonoBehaviour
     float Avaliation()
     {
         controller.FulfillAllRules();
-        Debug.Log(outdomain.Str());
         return outdomain.Defuzzyfication();
     }
 	

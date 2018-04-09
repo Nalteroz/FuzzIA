@@ -107,6 +107,28 @@ public class House
             TurnBets.AddRange(Players[i].MakeBet());
         }
     }
+    public void PayOdds(EvaluationHandler handler)
+    {
+        int WinIdx = handler.GetWinnerIdx();
+        foreach (Bet bet in TurnBets)
+        {
+            if(bet.RecomentationIdx == WinIdx)
+            {
+                float Montant = 0, Odd;
+                int WinnerPossibilitieIdx;
+                for (int DomainIdx = 0; DomainIdx < bet.IndividualValues.Length; DomainIdx++)
+                {
+                    for (int SetIdx = 0; SetIdx < bet.IndividualValues[DomainIdx].Length; SetIdx++)
+                    {
+                        WinnerPossibilitieIdx = TurnRecomendations[WinIdx][DomainIdx][SetIdx];
+                        Montant += bet.IndividualValues[DomainIdx][SetIdx] * Odds[DomainIdx][SetIdx].Odds[WinnerPossibilitieIdx];
+                        Odds[DomainIdx][SetIdx].CountAWin(WinnerPossibilitieIdx);
+                    }
+                }
+                bet.Player.RecievePayment(Montant);
+            }
+        }
+    }
     
 }
 
