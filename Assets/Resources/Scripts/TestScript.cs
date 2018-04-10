@@ -6,12 +6,10 @@ using System;
 public class TestScript : MonoBehaviour
 {
     FuzzyController controller = new FuzzyController();
-    Event Ev;
     InputDomain indomain1, indomain2;
     OutputDomain outdomain;
-    House Hou;
     OutputSet outset;
-    EvaluationHandler Handler;
+    Game game;
 	// Use this for initialization
 	void Start ()
     {
@@ -28,15 +26,10 @@ public class TestScript : MonoBehaviour
         outdomain = controller.AddOutputDomain("R", new Range(-1, 1));
         outset = outdomain.AddSet("certo", new float[] { 0, 1, 1 });
         outset = outdomain.AddSet("errado", new float[] { -1, -1, 0 });
-        Ev = new Event(controller);
-        Hou = new House(Ev);
-        Hou.GetRecomendations();
-        Hou.GetBets();
-        Ev.GetRecomendationsRules(Hou);
-        Handler = new EvaluationHandler(Ev, Avaliation);
-        Handler.StepEvaluation();
-        Hou.PayOdds(Handler);
-        Debug.Log(Hou.Str());
+        game = new Game(controller, 10, Avaliation);
+        game.RunCompleteGame();
+        Debug.Log(game.Event.Str());
+        Debug.Log(game.GameHouse.Str());
 
 
 

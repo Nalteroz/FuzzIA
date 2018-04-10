@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 8
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -39,7 +39,6 @@ RenderSettings:
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
-  m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -55,10 +54,11 @@ LightmapSettings:
     m_EnableBakedLightmaps: 0
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 9
     m_Resolution: 2
     m_BakeResolution: 40
-    m_AtlasSize: 1024
+    m_TextureWidth: 1024
+    m_TextureHeight: 1024
     m_AO: 0
     m_AOMaxDistance: 1
     m_CompAOExponent: 0
@@ -487,9 +487,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5153df7e7b65b014493730a59cf3a73f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VelocityScale: 8
+  VelocityScale: 5
   xEdgeLimit: 12
-  Direction: {x: 1, y: 1}
+  Direction: {x: 1, y: 0.01}
   PlayerTextPoints: {fileID: 1865986836}
   OponentTextPoints: {fileID: 397504505}
 --- !u!212 &1716286895
@@ -505,7 +505,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -647,7 +646,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -842,7 +840,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -905,7 +902,6 @@ GameObject:
   - component: {fileID: 2026177968}
   - component: {fileID: 2026177970}
   - component: {fileID: 2026177969}
-  - component: {fileID: 2026177971}
   - component: {fileID: 2026177967}
   m_Layer: 0
   m_Name: PlayerBar
@@ -935,12 +931,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2026177965}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c04fde9c5721ff40b24735a2de374b0, type: 3}
+  m_Script: {fileID: 11500000, guid: 55de77f6fa3a67b4ea9fc76516092072, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VelocityScale: 15
+  VelocityScale: 5
   yPositionEdge: 5
-  BallObject: {fileID: 1716286892}
+  BallObject: {fileID: 1716286894}
 --- !u!212 &2026177968
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -954,7 +950,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
@@ -1031,19 +1026,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &2026177971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2026177965}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e8fdd71ae69ed24a9003293a36888d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  VelocityScale: 10
-  yPositionEdge: 5
 --- !u!1 &2122668977
 GameObject:
   m_ObjectHideFlags: 0
@@ -1053,9 +1035,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2122668978}
   - component: {fileID: 2122668981}
-  - component: {fileID: 2122668979}
   - component: {fileID: 2122668982}
   - component: {fileID: 2122668980}
+  - component: {fileID: 2122668979}
   m_Layer: 0
   m_Name: OponentBar
   m_TagString: Untagged
@@ -1084,12 +1066,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2122668977}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c04fde9c5721ff40b24735a2de374b0, type: 3}
+  m_Script: {fileID: 11500000, guid: 55de77f6fa3a67b4ea9fc76516092072, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VelocityScale: 15
+  VelocityScale: 5
   yPositionEdge: 5
-  BallObject: {fileID: 1716286892}
+  BallObject: {fileID: 1716286894}
 --- !u!61 &2122668980
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1128,7 +1110,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

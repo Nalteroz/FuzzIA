@@ -28,7 +28,7 @@ public class FuzzyOponent : PongBar
         Output.AddSet("GetCenter", new float[] { -0.5f, 0, 0.5f });
         Rules[0] = Controller.AddRule("if distance is very close and yposition is down then action is movedown");
         Rules[1] = Controller.AddRule("if distance is very close and yposition is up then action is moveup");
-        Rules[2] = Controller.AddRule("if distance is not very close then action is getcenter");
+        Rules[2] = Controller.AddRule("if distance is not close then action is getcenter");
     }
 	
 	// Update is called once per frame

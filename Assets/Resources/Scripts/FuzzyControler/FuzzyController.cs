@@ -146,4 +146,13 @@ public class FuzzyController
             rule.FulfillRule();
         }
     }
+    public string StrRules()
+    {
+        string Out = "";
+        foreach(FuzzyRule rule in RulesList)
+        {
+            Out += rule.Str() ;
+        }
+        return Out;
+    }
 }

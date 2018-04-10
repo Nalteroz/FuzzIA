@@ -237,6 +237,7 @@
   <ItemGroup>
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\EvaluationHandler.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Event.cs" />
+    <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Game.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\House.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Player.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\Functions.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzyDomains.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzyRule.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\FuzzySets.cs" />
+    <Compile Include="Assets\Resources\Scripts\Pong\EvolutionaryPong.cs" />
     <Compile Include="Assets\Resources\Scripts\Pong\FuzzyOponent.cs" />
     <Compile Include="Assets\Resources\Scripts\Pong\PlayerBar.cs" />
     <Compile Include="Assets\Resources\Scripts\Pong\PongBall.cs" />

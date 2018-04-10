@@ -109,24 +109,37 @@ public class House
     }
     public void PayOdds(EvaluationHandler handler)
     {
-        int WinIdx = handler.GetWinnerIdx();
+        int WinIdx = handler.GetWinnerIdx(), WinnerPossibilitieIdx; ;
         foreach (Bet bet in TurnBets)
         {
             if(bet.RecomentationIdx == WinIdx)
             {
-                float Montant = 0, Odd;
-                int WinnerPossibilitieIdx;
+                float Montant = 0;
                 for (int DomainIdx = 0; DomainIdx < bet.IndividualValues.Length; DomainIdx++)
                 {
                     for (int SetIdx = 0; SetIdx < bet.IndividualValues[DomainIdx].Length; SetIdx++)
                     {
                         WinnerPossibilitieIdx = TurnRecomendations[WinIdx][DomainIdx][SetIdx];
                         Montant += bet.IndividualValues[DomainIdx][SetIdx] * Odds[DomainIdx][SetIdx].Odds[WinnerPossibilitieIdx];
-                        Odds[DomainIdx][SetIdx].CountAWin(WinnerPossibilitieIdx);
                     }
                 }
                 bet.Player.RecievePayment(Montant);
             }
+        }
+        for (int DomainIdx = 0; DomainIdx < TurnRecomendations[WinIdx].Count; DomainIdx++)
+        {
+            for (int SetIdx = 0; SetIdx < TurnRecomendations[WinIdx][DomainIdx].Count; SetIdx++)
+            {
+                WinnerPossibilitieIdx = TurnRecomendations[WinIdx][DomainIdx][SetIdx];
+                Odds[DomainIdx][SetIdx].CountAWin(WinnerPossibilitieIdx);
+            }
+        }
+    }
+    public void RenewPlayers()
+    {
+        for(int playeridx = 0; playeridx < Players.Count; playeridx++)
+        {
+            if (Players[playeridx].isBroken) Players[playeridx] = new Player(this);
         }
     }
     
