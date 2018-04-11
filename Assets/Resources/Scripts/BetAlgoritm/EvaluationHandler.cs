@@ -22,12 +22,12 @@ public class EvaluationHandler
     }
     public string Str()
     {
-        string Out = "Evaluations completed: [";
+        string Out = "Evaluations: [";
         foreach (float result in EvaluationResults)
         {
             Out += result + "; ";
         }
-        Out += "]\n";
+        Out += "] WinnerIndex: "+GetWinnerIdx()+"\n";
         return Out;
     }
     public void StepEvaluation()
@@ -56,12 +56,18 @@ public class EvaluationHandler
             }
         }
     }
-
+    public void ResetEvaluation()
+    {
+        EvaluationComplete = false;
+        EvaluationResults = new List<float>();
+    }
     float EvaluateRecomendation(List<FuzzyRule> recomendation)
     {
-        List<FuzzyRule> CopyList = new List<FuzzyRule>(recomendation);
-        Event.ControllerPointer.AddRule(CopyList);
-        return EvaluatePredictionMethod();
+        List<FuzzyRule> MainRules = Event.ControllerPointer.RulesList;
+        Event.ControllerPointer.AddRule(recomendation);
+        float Evaluiation = EvaluatePredictionMethod();
+        Event.ControllerPointer.AddRule(MainRules);
+        return Evaluiation;
     }
     public List<float> GetResult()
     {
@@ -70,16 +76,13 @@ public class EvaluationHandler
     public int GetWinnerIdx()
     {
         int WinnerIdx = -1;
-        float WinnerValue = float.NegativeInfinity;
-        if (EvaluationComplete)
+        float WinnerValue = 0;
+        for(int i = 0; i < EvaluationResults.Count; i ++)
         {
-            for(int i = 0; i < EvaluationResults.Count; i ++)
+            if(EvaluationResults[i] > WinnerValue)
             {
-                if(EvaluationResults[i] > WinnerValue)
-                {
-                    WinnerIdx = i;
-                    WinnerValue = EvaluationResults[i];
-                }
+                WinnerIdx = i;
+                WinnerValue = EvaluationResults[i];
             }
         }
         return WinnerIdx;

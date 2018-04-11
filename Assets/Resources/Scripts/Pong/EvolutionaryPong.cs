@@ -29,33 +29,39 @@ public class EvolutionaryPong : PongBar
         Output.AddSet("MoveDown", new float[] { -1, -1, 0 });
         Output.AddSet("GetCenter", new float[] { -0.5f, 0, 0.5f });
 
-        GameCtlr = new Game(FzCtrl, -1, EvaluationFunction);
+        GameCtlr = new Game(FzCtrl, -1, PredictedDistance);
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        GameCtlr.PlayTurn();
         Input1.SetX(Vector3.Distance(transform.position, BallObject.transform.position));
         Input2.SetX(BallObject.transform.position.y - transform.position.y);
+        GameCtlr.PlayTurn();
         FzCtrl.FulfillAllRules();
+        MakeAction();
+        GameCtlr.ResetTurnCount();
+    }
+
+    void MakeAction()
+    {
         Defused = Output.Defuzzyfication();
-        if (Defused != NullValue) MakeAction(Defused);
+        if (Defused != NullValue)
+        {
+            if (Defused > 0) MoveUp();
+            else if (Defused < 0) MoveDown();
+            else if (Defused == 0) GetCenter();
+        }
     }
 
-    void MakeAction(float decision)
+    public float PredictedDistance()
     {
-        if (decision > 0) MoveUp();
-        else if (decision < 0) MoveDown();
-        else if (decision == 0) GetCenter();
-    }
-
-
-    public float EvaluationFunction()
-    {
-        float Result = 0;
-        Result = 1f / (Vector3.Distance(transform.position, BallObject.transform.position));
-        Debug.Log(Result);
-        return Result;
+        Vector3 SavedPosition = transform.position;
+        float RealDistance = Vector3.Distance(transform.position, BallObject.transform.position), PredictedDistance;
+        FzCtrl.FulfillAllRules();
+        MakeAction();
+        PredictedDistance = Vector3.Distance(transform.position, BallObject.transform.position);
+        transform.position = SavedPosition;
+        return (RealDistance - PredictedDistance);
     }
 }

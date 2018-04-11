@@ -66,7 +66,16 @@ public class House
         }
         return Out;
     }
-
+    public string StrPlayers()
+    {
+        string Out = "N of players: " + Players.Count;
+        Out += "\nPlayers:\n";
+        for (int i = 0; i < Players.Count; i++)
+        {
+            Out += "Player " + i + ": " + Players[i].Str();
+        }
+        return Out;
+    }
 
     public void InitializePlayers(int nOfPlayers)
     {
@@ -109,7 +118,7 @@ public class House
     }
     public void PayOdds(EvaluationHandler handler)
     {
-        int WinIdx = handler.GetWinnerIdx(), WinnerPossibilitieIdx; ;
+        int WinIdx = handler.GetWinnerIdx(), WinnerPossibilitieIdx;
         foreach (Bet bet in TurnBets)
         {
             if(bet.RecomentationIdx == WinIdx)
@@ -126,12 +135,15 @@ public class House
                 bet.Player.RecievePayment(Montant);
             }
         }
-        for (int DomainIdx = 0; DomainIdx < TurnRecomendations[WinIdx].Count; DomainIdx++)
+        if (WinIdx >= 0)
         {
-            for (int SetIdx = 0; SetIdx < TurnRecomendations[WinIdx][DomainIdx].Count; SetIdx++)
+            for (int DomainIdx = 0; DomainIdx < TurnRecomendations[WinIdx].Count; DomainIdx++)
             {
-                WinnerPossibilitieIdx = TurnRecomendations[WinIdx][DomainIdx][SetIdx];
-                Odds[DomainIdx][SetIdx].CountAWin(WinnerPossibilitieIdx);
+                for (int SetIdx = 0; SetIdx < TurnRecomendations[WinIdx][DomainIdx].Count; SetIdx++)
+                {
+                    WinnerPossibilitieIdx = TurnRecomendations[WinIdx][DomainIdx][SetIdx];
+                    Odds[DomainIdx][SetIdx].CountAWin(WinnerPossibilitieIdx);
+                }
             }
         }
     }
@@ -139,7 +151,13 @@ public class House
     {
         for(int playeridx = 0; playeridx < Players.Count; playeridx++)
         {
-            if (Players[playeridx].isBroken) Players[playeridx] = new Player(this);
+            if (Players[playeridx].isBroken)
+            {
+                string Out = "Player "+ playeridx +" is out.\n" + Players[playeridx].Str() + "Renewing player:\n";
+                Players[playeridx] = new Player(this);
+                Out += "New player:\n" + Players[playeridx].Str();
+                Debug.Log(Out);
+            }
         }
     }
     

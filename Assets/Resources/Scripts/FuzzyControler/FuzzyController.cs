@@ -148,11 +148,27 @@ public class FuzzyController
     }
     public string StrRules()
     {
-        string Out = "";
+        string Out = "Rules:\n";
         foreach(FuzzyRule rule in RulesList)
         {
             Out += rule.Str() ;
         }
+        return Out;
+    }
+    public string Str()
+    {
+        string Out = "Fuzzy Controller:\n";
+        Out += "Imputs:\n";
+        foreach (InputDomain domain in ImputDomainsList)
+        {
+            Out += domain.Str();
+        }
+        Out += "OutPut:\n";
+        foreach (OutputDomain domain in OutputDomainsList)
+        {
+            Out += domain.Str();
+        }
+        Out += StrRules();
         return Out;
     }
 }

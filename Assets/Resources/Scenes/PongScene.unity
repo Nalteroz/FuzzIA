@@ -487,9 +487,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5153df7e7b65b014493730a59cf3a73f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VelocityScale: 5
-  xEdgeLimit: 12
-  Direction: {x: 1, y: 0.01}
+  VelocityScale: 7
+  xEdgeLimit: 10
+  Direction: {x: 1, y: 1}
   PlayerTextPoints: {fileID: 1865986836}
   OponentTextPoints: {fileID: 397504505}
 --- !u!212 &1716286895
@@ -931,12 +931,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2026177965}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55de77f6fa3a67b4ea9fc76516092072, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c04fde9c5721ff40b24735a2de374b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   VelocityScale: 5
   yPositionEdge: 5
-  BallObject: {fileID: 1716286894}
+  BallObject: {fileID: 1716286892}
 --- !u!212 &2026177968
 SpriteRenderer:
   m_ObjectHideFlags: 0

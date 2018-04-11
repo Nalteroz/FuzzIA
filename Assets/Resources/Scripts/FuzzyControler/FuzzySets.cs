@@ -42,15 +42,15 @@ public class FuzzySet
     }
     public void SetXbyY(float y)
     {
-        if(y < 0 || y > 1)
+        if(y <  -1e-4f || y > 1)
         {
-            throw new System.ArgumentException("Erro on SetXbyY on "+Name+". The y is not on the range permited (0/1).");
+            throw new System.ArgumentException("Erro on SetXbyY on "+Name+". The y "+ y +"is not on the range permited (0/1).");
         }
         else
         {
             if(Functions[0].EdgeFunction) X = Functions[1].CalculeX(y);
             else X = Functions[0].CalculeX(y);
-
+            
         }
     }
     public enum Types

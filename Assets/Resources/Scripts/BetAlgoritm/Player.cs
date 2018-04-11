@@ -12,7 +12,7 @@ public class Player
     
     int WalletNumber;
 
-    public Player(House house, float walletbankroll = 1500)
+    public Player(House house, float walletbankroll = 1000)
     {
         HousePointer = house;
         isBroken = false;

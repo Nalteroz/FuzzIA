@@ -19,7 +19,6 @@ public class PongBall : MonoBehaviour
 	void Update ()
     {
         transform.position += (Vector3) Direction * VelocityScale * Time.deltaTime;
-        VelocityScale += Time.deltaTime * 0.1f;
         CheckBallOut(transform.position.x);
 	}
 
@@ -37,15 +36,17 @@ public class PongBall : MonoBehaviour
             Pontuation++;
             PlayerTextPoints.text = Pontuation.ToString();
             transform.position = Vector3.zero;
-            VelocityScale = 10;
+            VelocityScale = 5;
+            Direction = new Vector2(1, 1);
         }
         else if (xPosition < -xEdgeLimit)
         {
+            transform.position = Vector3.zero;
             Pontuation = float.Parse(OponentTextPoints.text);
             Pontuation++;
             OponentTextPoints.text = Pontuation.ToString();
-            transform.position = Vector3.zero;
-            VelocityScale = 10;
+            VelocityScale = 5;
+            Direction = new Vector2(1, 1);
         }
     }
 

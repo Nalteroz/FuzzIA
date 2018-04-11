@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 public class Game
 {
@@ -34,15 +35,17 @@ public class Game
         {
             PlayTurn();
         }
+        if (TotalOfTurns == -1) PlayTurn();
     }
 	
     public void PlayTurn()
     {
-        if(CurrentTurn < TotalOfTurns)
+        if (CurrentTurn < TotalOfTurns)
         {
             GameCicle();
-            if(TotalOfTurns != -1)CurrentTurn++;
+            CurrentTurn++;
         }
+        else if (TotalOfTurns == -1) GameCicle();
         if (CurrentTurn == TotalOfTurns) GameFinish = true;
     }
     public void ResetTurnCount()
@@ -52,6 +55,7 @@ public class Game
     }
     void GameCicle()
     {
+        Debug.Log(GameHouse.StrPlayers());
         GameHouse.GetRecomendations();
         GameHouse.GetBets();
         Event.GetRecomendationsRules(GameHouse);
@@ -59,6 +63,7 @@ public class Game
         UseWinnerRule();
         GameHouse.PayOdds(EvaluationHdlr);
         GameHouse.RenewPlayers();
+        EvaluationHdlr.ResetEvaluation();
     }
 
     void UseWinnerRule()
@@ -67,7 +72,7 @@ public class Game
         if (winneridx >= 0)
         {
             List<FuzzyRule> WinnerRules = Event.RecomendationRules[winneridx];
-            List<FuzzyRule> CopyList = new List<FuzzyRule>();
+            List<FuzzyRule> CopyList = new List<FuzzyRule>(WinnerRules);
             Event.ControllerPointer.AddRule(CopyList);
         }
     }
