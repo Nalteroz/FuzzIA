@@ -55,7 +55,6 @@ public class Game
     }
     void GameCicle()
     {
-        Debug.Log(GameHouse.StrPlayers());
         GameHouse.GetRecomendations();
         GameHouse.GetBets();
         Event.GetRecomendationsRules(GameHouse);

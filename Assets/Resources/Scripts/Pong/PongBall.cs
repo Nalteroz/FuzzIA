@@ -19,6 +19,7 @@ public class PongBall : MonoBehaviour
 	void Update ()
     {
         transform.position += (Vector3) Direction * VelocityScale * Time.deltaTime;
+        VelocityScale += Time.deltaTime * 0.1f; 
         CheckBallOut(transform.position.x);
 	}
 

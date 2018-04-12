@@ -74,6 +74,7 @@ public class Player
     public void RecievePayment(float montant)
     {
         Wallet += montant;
+        if (Wallet > 1e6f) Wallet = 1e6f;
         if(montant > 0) isBroken = false;
     }
     public Bet CalculeRecomentationBet(int recomendationIdx)

@@ -27,7 +27,6 @@ public class EvolutionaryPong : PongBar
         Input2.AddSet("Down", new float[] { -5, -5, 0 });
         Output.AddSet("MoveUp", new float[] { 0, 1, 1 });
         Output.AddSet("MoveDown", new float[] { -1, -1, 0 });
-        Output.AddSet("GetCenter", new float[] { -0.5f, 0, 0.5f });
 
         GameCtlr = new Game(FzCtrl, -1, PredictedDistance);
 	}
@@ -50,7 +49,6 @@ public class EvolutionaryPong : PongBar
         {
             if (Defused > 0) MoveUp();
             else if (Defused < 0) MoveDown();
-            else if (Defused == 0) GetCenter();
         }
     }
 

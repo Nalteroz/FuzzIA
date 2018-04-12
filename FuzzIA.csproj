@@ -250,7 +250,6 @@
     <Compile Include="Assets\Resources\Scripts\Pong\PlayerBar.cs" />
     <Compile Include="Assets\Resources\Scripts\Pong\PongBall.cs" />
     <Compile Include="Assets\Resources\Scripts\Pong\PongBar.cs" />
-    <Compile Include="Assets\Resources\Scripts\TestScript.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

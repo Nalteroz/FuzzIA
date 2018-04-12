@@ -26,9 +26,10 @@ public class FuzzyOponent : PongBar
         Output.AddSet("MoveUp", new float[] { 0, 1, 1 });
         Output.AddSet("MoveDown", new float[] { -1, -1, 0 });
         Output.AddSet("GetCenter", new float[] { -0.5f, 0, 0.5f });
-        Rules[0] = Controller.AddRule("if distance is very close and yposition is down then action is movedown");
-        Rules[1] = Controller.AddRule("if distance is very close and yposition is up then action is moveup");
-        Rules[2] = Controller.AddRule("if distance is not close then action is getcenter");
+        Rules[0] = Controller.AddRule("if distance is close and yposition is down then action is movedown");
+        Rules[0] = Controller.AddRule("if distance is mid and yposition is down then action is movedown");
+        Rules[1] = Controller.AddRule("if distance is close and yposition is up then action is moveup");
+        Rules[1] = Controller.AddRule("if distance is mid and yposition is up then action is moveup");
     }
 	
 	// Update is called once per frame
@@ -45,7 +46,6 @@ public class FuzzyOponent : PongBar
     {
         if (decision > 0) MoveUp();
         else if (decision < 0) MoveDown();
-        else if (decision == 0) GetCenter();
     }
     
 }

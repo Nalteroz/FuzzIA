@@ -26,8 +26,4 @@ public abstract class PongBar : MonoBehaviour
     {
         if (transform.position.y > -yPositionEdge) transform.position += Vector3.down * VelocityScale * Time.deltaTime;
     }
-    protected void GetCenter()
-    {
-        transform.position = transform.position - new Vector3(0, transform.position.y, 0);
-    }
 }

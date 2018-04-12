@@ -13,7 +13,7 @@ public class House
     public List<Bet> TurnBets { get; private set; }
 
 
-    public House(Event Event, int nOfPlayers = 3, int MinimalRisk = 10)
+    public House(Event Event, int nOfPlayers = 1, int MinimalRisk = 10)
     {
         EventPointer = Event;
         ControllerPointer = Event.ControllerPointer;
@@ -153,10 +153,7 @@ public class House
         {
             if (Players[playeridx].isBroken)
             {
-                string Out = "Player "+ playeridx +" is out.\n" + Players[playeridx].Str() + "Renewing player:\n";
                 Players[playeridx] = new Player(this);
-                Out += "New player:\n" + Players[playeridx].Str();
-                Debug.Log(Out);
             }
         }
     }
