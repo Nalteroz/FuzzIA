@@ -5,8 +5,8 @@ using UnityEngine;
 public class EvolutionaryPong : PongBar
 {
     public PongBall BallObject;
-    public FuzzyController FzCtrl;
 
+    FuzzyController FzCtrl;
     InputDomain Input1, Input2;
     OutputDomain Output;
     Game GameCtlr;

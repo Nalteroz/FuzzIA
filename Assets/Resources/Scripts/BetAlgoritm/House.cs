@@ -13,7 +13,7 @@ public class House
     public List<Bet> TurnBets { get; private set; }
 
 
-    public House(Event Event, int nOfPlayers = 1, int MinimalRisk = 10)
+    public House(Event Event, int nOfPlayers = 10, int MinimalRisk = 10)
     {
         EventPointer = Event;
         ControllerPointer = Event.ControllerPointer;
