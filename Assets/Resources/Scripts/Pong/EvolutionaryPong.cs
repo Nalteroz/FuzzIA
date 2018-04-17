@@ -15,8 +15,8 @@ public class EvolutionaryPong : PongBar
 	void Start ()
     {
         FzCtrl = new FuzzyController();
-        Input1 = FzCtrl.AddImputDomain("Distance", new Range(0, 20));
-        Input2 = FzCtrl.AddImputDomain("yPosition", new Range(-5, 5));
+        Input1 = FzCtrl.AddInputDomain("Distance", new Range(0, 20));
+        Input2 = FzCtrl.AddInputDomain("yPosition", new Range(-5, 5));
         Output = FzCtrl.AddOutputDomain("Action", new Range(-1, 1));
         Input1.AddSet("Middle", new float[] { 7, 10, 13 });
         Input1.AddSet("VeryClose", new float[] { 0, 0, 3 });

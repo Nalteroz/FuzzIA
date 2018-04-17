@@ -15,8 +15,8 @@ public class FuzzyOponent : PongBar
     // Use this for initialization
     void Start ()
     {
-        Input1 = Controller.AddImputDomain("Distance", new Range(0, 20));
-        Input2 = Controller.AddImputDomain("yPosition", new Range(-5, 5));
+        Input1 = Controller.AddInputDomain("Distance", new Range(0, 20));
+        Input2 = Controller.AddInputDomain("yPosition", new Range(-5, 5));
         Output = Controller.AddOutputDomain("Action", new Range(-1, 1));
         Input1.AddSet("Far", new float[] { 12, 15, 20, 20});
         Input1.AddSet("Mid", new float[] { 5, 10, 15 });

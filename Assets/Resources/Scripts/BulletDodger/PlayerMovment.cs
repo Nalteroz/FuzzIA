@@ -9,12 +9,12 @@ public class PlayerMovment : MonoBehaviour
     float angle = 0;
 	// Use this for initialization
 	
-    void MoveLeft()
+    public void MoveLeft()
     {
         angle += AngularVelocity;
         GetToPosition(angle);
     }
-    void MoveRight()
+    public void MoveRight()
     {
         angle -= AngularVelocity;
         GetToPosition(angle);

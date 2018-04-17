@@ -42,7 +42,7 @@ public class FuzzySet
     }
     public void SetXbyY(float y)
     {
-        if(y <  -1e-4f || y > 1)
+        if(y < -1e-4f || y > 1)
         {
             throw new System.ArgumentException("Erro on SetXbyY on "+Name+". The y "+ y +"is not on the range permited (0/1).");
         }

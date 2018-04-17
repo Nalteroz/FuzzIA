@@ -19,7 +19,7 @@ public class FuzzyController
         RulesList = new List<FuzzyRule>();
     }
 
-    public InputDomain AddImputDomain(string name, Range range)
+    public InputDomain AddInputDomain(string name, Range range)
     {
         InputDomain NewDomain;
         string LowName = name.ToLower();
@@ -51,7 +51,7 @@ public class FuzzyController
         }
         return NewDomain;
     }
-    public void RemoveImputDomain(string name)
+    public void RemoveInputDomain(string name)
     {
         InputDomain Domain;
         if (ImputDomainsDictionary.ContainsKey(name))
@@ -65,7 +65,7 @@ public class FuzzyController
             throw new System.ArgumentNullException("Erro on RemoveImputDomain: The domain name "+ name +" not exist!");
         }
     }
-    public void RemoveImputDomain(InputDomain domain)
+    public void RemoveInputDomain(InputDomain domain)
     {
         InputDomain Domain;
         if (ImputDomainsDictionary.ContainsKey(domain.Name))
