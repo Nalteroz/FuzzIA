@@ -240,7 +240,7 @@
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Game.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\House.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Player.cs" />
-    <Compile Include="Assets\Resources\Scripts\BulletDodger\EvolutionaryPlayer.cs" />
+    <Compile Include="Assets\Resources\Scripts\BulletDodger\EvolutionaryDodger.cs" />
     <Compile Include="Assets\Resources\Scripts\BulletDodger\Gun.cs" />
     <Compile Include="Assets\Resources\Scripts\BulletDodger\PlayerMovment.cs" />
     <Compile Include="Assets\Resources\Scripts\FuzzyControler\Functions.cs" />
