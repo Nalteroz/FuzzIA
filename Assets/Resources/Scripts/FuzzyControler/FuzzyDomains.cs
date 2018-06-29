@@ -79,7 +79,7 @@ public class InputDomain : FuzzyDomain
     public InputSet RemoveSet(string name)
     {
         InputSet Set;
-        if (!SetsDictionary.ContainsKey(name))
+        if (SetsDictionary.ContainsKey(name))
         {
             Set = SetsDictionary[name];
             SetsDictionary.Remove(Set.Name);
@@ -115,7 +115,7 @@ public class InputDomain : FuzzyDomain
         }
         SetMembership();
     }
-    public void SetMembership()
+    void SetMembership()
     {
         List<FuzzyValue> Answer = new List<FuzzyValue>();
         float result = 0;
@@ -201,7 +201,7 @@ public class OutputDomain : FuzzyDomain
     public OutputSet RemoveSet(string name)
     {
         OutputSet Set;
-        if (!SetsDictionary.ContainsKey(name))
+        if (SetsDictionary.ContainsKey(name))
         {
             Set = SetsDictionary[name];
             SetsDictionary.Remove(Set.Name);

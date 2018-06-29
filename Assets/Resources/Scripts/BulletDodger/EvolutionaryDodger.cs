@@ -10,8 +10,7 @@ public class EvolutionaryDodger : PlayerMovment
     InputDomain Input1, Input2;
     OutputDomain Output;
     Game GameCtlr;
-
-    float Defused, NullValue = float.NegativeInfinity;
+    
     GameObject AimBullet;
 
     void Start ()

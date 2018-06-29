@@ -28,7 +28,7 @@ public class EvolutionaryPong : PongBar
         Output.AddSet("MoveUp", new float[] { 0, 1, 1 });
         Output.AddSet("MoveDown", new float[] { -1, -1, 0 });
 
-        GameCtlr = new Game(FzCtrl, -1, PredictedDistance);
+        GameCtlr = new Game(FzCtrl, 1, PredictedDistance);
 	}
 	
 	// Update is called once per frame

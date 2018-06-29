@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class FuzzySet
 {
-    public int ID;
     public string Name;
     public Range SetRange { get; private set; }
     public float X { get; private set; }
@@ -179,7 +178,7 @@ public class FuzzySet
             return CenterOfArea;
         }
     }
-    public float GetMiddlePoint()
+    float GetMiddlePoint()
     {
         float Middle;
         if (Type == Types.Triangle)
