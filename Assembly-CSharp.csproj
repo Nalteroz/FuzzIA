@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Resources\Scripts\Baliza\TruckMovment.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\EvaluationHandler.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Event.cs" />
     <Compile Include="Assets\Resources\Scripts\BetAlgoritm\Game.cs" />
